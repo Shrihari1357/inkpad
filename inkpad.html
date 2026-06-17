@@ -5,1293 +5,1084 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>InkPad — Digital Handwriting</title>
 <style>
-  :root {
-    --bg-primary: #FAFAF8;
-    --bg-secondary: #F0EFE9;
-    --bg-sidebar: #EFEDE6;
-    --bg-toolbar: rgba(250,250,248,0.92);
-    --text-primary: #1A1A18;
-    --text-secondary: #6B6B65;
-    --text-tertiary: #9B9B94;
-    --border-color: rgba(0,0,0,0.09);
-    --border-strong: rgba(0,0,0,0.15);
-    --accent: #2563EB;
-    --accent-hover: #1D4ED8;
-    --accent-light: rgba(37,99,235,0.1);
-    --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
-    --shadow-md: 0 4px 12px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.06);
-    --shadow-lg: 0 8px 32px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.06);
-    --radius-sm: 6px;
-    --radius-md: 10px;
-    --radius-lg: 14px;
-    --radius-xl: 20px;
-    --page-bg: #FFFFFF;
-    --page-line: rgba(100,149,237,0.22);
-    --page-dot: rgba(100,149,237,0.3);
-    --page-grid: rgba(100,149,237,0.18);
-    --sidebar-w: 240px;
-    --toolbar-h: 56px;
-    --transition: 0.18s ease;
-  }
-  [data-theme="dark"] {
-    --bg-primary: #1C1C1A;
-    --bg-secondary: #242422;
-    --bg-sidebar: #1A1A18;
-    --bg-toolbar: rgba(28,28,26,0.92);
-    --text-primary: #F0EFE9;
-    --text-secondary: #9B9B94;
-    --text-tertiary: #6B6B65;
-    --border-color: rgba(255,255,255,0.07);
-    --border-strong: rgba(255,255,255,0.13);
-    --accent: #3B82F6;
-    --accent-hover: #60A5FA;
-    --accent-light: rgba(59,130,246,0.15);
-    --shadow-sm: 0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
-    --shadow-md: 0 4px 12px rgba(0,0,0,0.35), 0 2px 4px rgba(0,0,0,0.2);
-    --shadow-lg: 0 8px 32px rgba(0,0,0,0.45), 0 4px 8px rgba(0,0,0,0.25);
-    --page-bg: #1E1E1B;
-    --page-line: rgba(100,149,237,0.14);
-    --page-dot: rgba(100,149,237,0.2);
-    --page-grid: rgba(100,149,237,0.1);
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
-  html, body { width: 100%; height: 100%; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', sans-serif; background: var(--bg-primary); color: var(--text-primary); }
+:root {
+  --bg-primary:#FAFAF8;--bg-secondary:#F0EFE9;--bg-sidebar:#EFEDE6;
+  --bg-toolbar:rgba(250,250,248,0.96);--text-primary:#1A1A18;
+  --text-secondary:#6B6B65;--text-tertiary:#9B9B94;
+  --border-color:rgba(0,0,0,0.09);--border-strong:rgba(0,0,0,0.15);
+  --accent:#2563EB;--accent-hover:#1D4ED8;--accent-light:rgba(37,99,235,0.1);
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md:0 4px 12px rgba(0,0,0,0.1),0 2px 4px rgba(0,0,0,0.06);
+  --shadow-lg:0 8px 32px rgba(0,0,0,0.12),0 4px 8px rgba(0,0,0,0.06);
+  --r-sm:6px;--r-md:10px;--r-lg:14px;--r-xl:20px;
+  --page-bg:#FFFFFF;--sidebar-w:230px;--tr:0.15s ease;
+  --row1-h:48px;--row2-h:42px;--toolbar-h:90px;
+}
+[data-theme="dark"]{
+  --bg-primary:#1C1C1A;--bg-secondary:#242422;--bg-sidebar:#1A1A18;
+  --bg-toolbar:rgba(26,26,24,0.97);--text-primary:#F0EFE9;
+  --text-secondary:#9B9B94;--text-tertiary:#6B6B65;
+  --border-color:rgba(255,255,255,0.07);--border-strong:rgba(255,255,255,0.13);
+  --accent:#3B82F6;--accent-hover:#60A5FA;--accent-light:rgba(59,130,246,0.15);
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.3);
+  --shadow-md:0 4px 12px rgba(0,0,0,0.35);--shadow-lg:0 8px 32px rgba(0,0,0,0.45);
+  --page-bg:#1E1E1B;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased;}
+html,body{width:100%;height:100%;overflow:hidden;
+  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-serif;
+  background:var(--bg-primary);color:var(--text-primary);}
 
-  /* LAYOUT */
-  #app { display: flex; height: 100vh; overflow: hidden; }
-  #sidebar { width: var(--sidebar-w); background: var(--bg-sidebar); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; flex-shrink: 0; transition: transform var(--transition); z-index: 20; }
-  #sidebar.collapsed { transform: translateX(-100%); position: absolute; height: 100%; }
-  #main { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+/* ── LAYOUT ── */
+#app{display:flex;height:100vh;overflow:hidden;}
+#sidebar{width:var(--sidebar-w);background:var(--bg-sidebar);border-right:1px solid var(--border-color);
+  display:flex;flex-direction:column;flex-shrink:0;transition:transform var(--tr);z-index:30;}
+#sidebar.hidden{transform:translateX(calc(-1 * var(--sidebar-w)));position:absolute;height:100%;box-shadow:var(--shadow-lg);}
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
 
-  /* SIDEBAR */
-  #sidebar-header { padding: 16px 14px 10px; display: flex; align-items: center; justify-content: space-between; }
-  #sidebar-header h1 { font-size: 16px; font-weight: 600; letter-spacing: -0.3px; color: var(--text-primary); }
-  .sidebar-new-btn { background: var(--accent); color: white; border: none; border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; transition: background var(--transition), transform var(--transition); }
-  .sidebar-new-btn:hover { background: var(--accent-hover); transform: scale(1.08); }
-  #sidebar-search { margin: 4px 12px 10px; position: relative; }
-  #sidebar-search input { width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 6px 10px 6px 30px; font-size: 12.5px; color: var(--text-primary); outline: none; transition: border-color var(--transition); }
-  #sidebar-search input:focus { border-color: var(--accent); }
-  #sidebar-search .search-icon { position: absolute; left: 9px; top: 50%; transform: translateY(-50%); color: var(--text-tertiary); font-size: 13px; pointer-events: none; }
-  .sidebar-section { padding: 6px 14px 4px; }
-  .sidebar-section-label { font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.7px; color: var(--text-tertiary); margin-bottom: 4px; }
-  .notebook-item { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: var(--radius-sm); cursor: pointer; transition: background var(--transition); user-select: none; }
-  .notebook-item:hover { background: var(--bg-secondary); }
-  .notebook-item.active { background: var(--accent-light); }
-  .notebook-item.active .nb-name { color: var(--accent); font-weight: 500; }
-  .nb-icon { font-size: 14px; color: var(--text-secondary); }
-  .nb-name { font-size: 13px; color: var(--text-primary); flex: 1; }
-  .nb-count { font-size: 11px; color: var(--text-tertiary); }
-  .pages-list { padding: 0 8px; overflow-y: auto; flex: 1; }
-  .page-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: var(--radius-sm); cursor: pointer; transition: background var(--transition); user-select: none; border-bottom: 1px solid transparent; }
-  .page-item:hover { background: var(--bg-secondary); }
-  .page-item.active { background: var(--accent-light); border-color: rgba(37,99,235,0.1); }
-  .page-preview-thumb { width: 36px; height: 28px; background: var(--page-bg); border: 1px solid var(--border-color); border-radius: 3px; overflow: hidden; flex-shrink: 0; }
-  .page-info { flex: 1; min-width: 0; }
-  .page-title { font-size: 12.5px; font-weight: 500; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .page-date { font-size: 11px; color: var(--text-tertiary); margin-top: 1px; }
-  .sidebar-footer { padding: 10px 12px; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
-  .sidebar-footer-btn { background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 16px; padding: 6px; border-radius: var(--radius-sm); transition: background var(--transition), color var(--transition); display: flex; align-items: center; justify-content: center; }
-  .sidebar-footer-btn:hover { background: var(--bg-secondary); color: var(--text-primary); }
+/* ── SIDEBAR ── */
+#sb-header{padding:14px 12px 8px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+#sb-header h1{font-size:15px;font-weight:700;letter-spacing:-0.3px;}
+.sb-new{background:var(--accent);color:#fff;border:none;border-radius:50%;width:24px;height:24px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;
+  transition:background var(--tr),transform var(--tr);line-height:1;}
+.sb-new:hover{background:var(--accent-hover);transform:scale(1.1);}
+#sb-search{margin:0 10px 8px;position:relative;}
+#sb-search input{width:100%;background:var(--bg-secondary);border:1px solid var(--border-color);
+  border-radius:var(--r-sm);padding:5px 8px 5px 26px;font-size:12px;color:var(--text-primary);outline:none;}
+#sb-search input:focus{border-color:var(--accent);}
+#sb-search .si{position:absolute;left:8px;top:50%;transform:translateY(-50%);
+  color:var(--text-tertiary);font-size:12px;pointer-events:none;}
+.sb-sec{padding:4px 12px 2px;font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:0.8px;color:var(--text-tertiary);}
+.nb-item{display:flex;align-items:center;gap:7px;padding:6px 10px;border-radius:var(--r-sm);
+  cursor:pointer;transition:background var(--tr);margin:1px 6px;}
+.nb-item:hover{background:var(--bg-secondary);}
+.nb-item.active{background:var(--accent-light);}
+.nb-item.active .nb-name{color:var(--accent);font-weight:600;}
+.nb-name{font-size:12.5px;flex:1;}
+.nb-cnt{font-size:10.5px;color:var(--text-tertiary);}
+#pages-list{flex:1;overflow-y:auto;padding:0 6px;}
+.pg-item{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:var(--r-sm);
+  cursor:pointer;transition:background var(--tr);margin:1px 0;}
+.pg-item:hover{background:var(--bg-secondary);}
+.pg-item.active{background:var(--accent-light);}
+.pg-thumb{width:34px;height:26px;background:var(--page-bg);border:1px solid var(--border-color);
+  border-radius:2px;flex-shrink:0;}
+.pg-info{flex:1;min-width:0;}
+.pg-title{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pg-date{font-size:10.5px;color:var(--text-tertiary);margin-top:1px;}
+#sb-footer{padding:8px 10px;border-top:1px solid var(--border-color);
+  display:flex;justify-content:space-around;flex-shrink:0;}
+.sb-foot-btn{background:none;border:none;color:var(--text-secondary);cursor:pointer;
+  font-size:17px;padding:6px 8px;border-radius:var(--r-sm);
+  transition:background var(--tr),color var(--tr);display:flex;align-items:center;}
+.sb-foot-btn:hover{background:var(--bg-secondary);color:var(--text-primary);}
+.sb-foot-btn span{font-size:11px;margin-left:4px;}
 
-  /* TOOLBAR */
-  #toolbar { height: var(--toolbar-h); background: var(--bg-toolbar); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; padding: 0 12px; gap: 4px; z-index: 10; user-select: none; flex-shrink: 0; }
-  #toolbar-left { display: flex; align-items: center; gap: 4px; }
-  #toolbar-center { display: flex; align-items: center; gap: 2px; flex: 1; justify-content: center; }
-  #toolbar-right { display: flex; align-items: center; gap: 4px; }
-  .tb-divider { width: 1px; height: 24px; background: var(--border-strong); margin: 0 4px; }
-  .tb-btn { background: none; border: none; color: var(--text-secondary); cursor: pointer; padding: 6px 8px; border-radius: var(--radius-sm); font-size: 15px; display: flex; align-items: center; justify-content: center; transition: background var(--transition), color var(--transition); position: relative; }
-  .tb-btn:hover { background: var(--bg-secondary); color: var(--text-primary); }
-  .tb-btn.active { background: var(--accent-light); color: var(--accent); }
-  .tb-btn .tb-tooltip { position: absolute; bottom: -32px; left: 50%; transform: translateX(-50%); background: var(--text-primary); color: var(--bg-primary); font-size: 11px; padding: 4px 7px; border-radius: 5px; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity 0.15s; z-index: 100; }
-  .tb-btn:hover .tb-tooltip { opacity: 1; }
-  .tool-group { display: flex; align-items: center; gap: 1px; background: var(--bg-secondary); border-radius: var(--radius-md); padding: 3px; }
-  .color-swatch { width: 20px; height: 20px; border-radius: 50%; cursor: pointer; border: 2.5px solid transparent; transition: border-color var(--transition), transform var(--transition); }
-  .color-swatch:hover { transform: scale(1.15); }
-  .color-swatch.active { border-color: var(--accent); }
-  .size-slider-wrap { display: flex; align-items: center; gap: 6px; }
-  .size-slider-wrap label { font-size: 11px; color: var(--text-secondary); white-space: nowrap; }
-  #stroke-size { width: 70px; accent-color: var(--accent); }
-  #page-title-input { background: none; border: none; outline: none; font-size: 14px; font-weight: 500; color: var(--text-primary); text-align: center; min-width: 120px; max-width: 200px; }
-  #page-title-input::placeholder { color: var(--text-tertiary); }
+/* ── TOOLBAR — two rows, no overflow ── */
+#toolbar{background:var(--bg-toolbar);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border-color);display:flex;flex-direction:column;
+  flex-shrink:0;z-index:10;user-select:none;}
 
-  /* CANVAS AREA */
-  #canvas-area { flex: 1; overflow: hidden; position: relative; background: var(--bg-primary); touch-action: none; }
-  #canvas-scroll { position: absolute; inset: 0; overflow: auto; display: flex; align-items: flex-start; justify-content: center; padding: 28px; }
-  #page-container { position: relative; background: var(--page-bg); box-shadow: var(--shadow-lg); border-radius: 2px; flex-shrink: 0; }
-  #bg-canvas { position: absolute; inset: 0; pointer-events: none; border-radius: 2px; }
-  #draw-canvas { position: absolute; inset: 0; cursor: crosshair; border-radius: 2px; touch-action: none; }
-  #overlay-canvas { position: absolute; inset: 0; pointer-events: none; border-radius: 2px; }
+/* Row 1 — tools + undo/redo/clear + title */
+#tb-row1{height:var(--row1-h);display:flex;align-items:center;padding:0 8px;gap:4px;
+  border-bottom:1px solid var(--border-color);overflow:hidden;}
+/* Row 2 — color + size + paper */
+#tb-row2{height:var(--row2-h);display:flex;align-items:center;padding:0 8px;gap:6px;overflow:hidden;}
 
-  /* STATUS BAR */
-  #status-bar { height: 26px; background: var(--bg-secondary); border-top: 1px solid var(--border-color); display: flex; align-items: center; padding: 0 14px; gap: 16px; flex-shrink: 0; }
-  .status-item { font-size: 11px; color: var(--text-tertiary); display: flex; align-items: center; gap: 4px; }
-  #palm-reject-badge { background: #22C55E; color: white; font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 10px; display: none; }
-  #palm-reject-badge.active { display: inline; }
+.tb-btn{background:none;border:none;color:var(--text-secondary);cursor:pointer;
+  padding:5px 7px;border-radius:var(--r-sm);font-size:16px;
+  display:flex;align-items:center;justify-content:center;gap:3px;
+  transition:background var(--tr),color var(--tr);position:relative;white-space:nowrap;flex-shrink:0;}
+.tb-btn:hover{background:var(--bg-secondary);color:var(--text-primary);}
+.tb-btn.active{background:var(--accent-light);color:var(--accent);}
+.tb-btn .tip{position:absolute;bottom:-28px;left:50%;transform:translateX(-50%);
+  background:var(--text-primary);color:var(--bg-primary);font-size:10px;padding:3px 6px;
+  border-radius:4px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity 0.12s;z-index:200;}
+.tb-btn:hover .tip{opacity:1;}
 
-  /* CONTEXT MENU */
-  #context-menu { position: fixed; background: var(--bg-toolbar); backdrop-filter: blur(20px); border: 1px solid var(--border-color); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); padding: 6px; z-index: 1000; display: none; min-width: 160px; }
-  .ctx-item { padding: 7px 12px; border-radius: var(--radius-sm); cursor: pointer; font-size: 13px; color: var(--text-primary); display: flex; align-items: center; gap: 8px; transition: background var(--transition); }
-  .ctx-item:hover { background: var(--bg-secondary); }
-  .ctx-item.danger { color: #EF4444; }
-  .ctx-divider { height: 1px; background: var(--border-color); margin: 4px 0; }
+.tg{display:flex;align-items:center;background:var(--bg-secondary);border-radius:var(--r-md);padding:2px;gap:1px;flex-shrink:0;}
 
-  /* MODAL */
-  .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 500; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); opacity: 0; pointer-events: none; transition: opacity var(--transition); }
-  .modal-backdrop.open { opacity: 1; pointer-events: all; }
-  .modal { background: var(--bg-primary); border-radius: var(--radius-xl); padding: 24px; max-width: 420px; width: 90%; box-shadow: var(--shadow-lg); transform: scale(0.96); transition: transform var(--transition); }
-  .modal-backdrop.open .modal { transform: scale(1); }
-  .modal h2 { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
-  .modal p { font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; }
-  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
-  .modal-btn { padding: 8px 18px; border-radius: var(--radius-md); border: none; cursor: pointer; font-size: 14px; font-weight: 500; transition: background var(--transition); }
-  .modal-btn.secondary { background: var(--bg-secondary); color: var(--text-primary); }
-  .modal-btn.secondary:hover { background: var(--border-color); }
-  .modal-btn.primary { background: var(--accent); color: white; }
-  .modal-btn.primary:hover { background: var(--accent-hover); }
-  .modal-btn.danger { background: #EF4444; color: white; }
+/* Action buttons — visible labels */
+.act-btn{display:flex;align-items:center;gap:4px;padding:5px 9px;border-radius:var(--r-sm);
+  border:1px solid var(--border-color);background:var(--bg-secondary);
+  font-size:12px;font-weight:500;color:var(--text-secondary);cursor:pointer;
+  transition:all var(--tr);white-space:nowrap;flex-shrink:0;}
+.act-btn:hover{background:var(--bg-primary);color:var(--text-primary);border-color:var(--border-strong);}
+.act-btn:active{transform:scale(0.97);}
+.act-btn.danger:hover{background:#FEE2E2;color:#DC2626;border-color:#FCA5A5;}
+[data-theme="dark"] .act-btn.danger:hover{background:#3B1616;color:#F87171;border-color:#7F1D1D;}
+.act-btn.disabled{opacity:0.35;pointer-events:none;}
 
-  /* COLOR PICKER POPUP */
-  #color-popup { position: absolute; background: var(--bg-toolbar); backdrop-filter: blur(20px); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 12px; box-shadow: var(--shadow-lg); z-index: 200; display: none; }
-  #color-popup.open { display: block; }
-  #color-popup input[type="color"] { width: 100%; height: 36px; border: none; border-radius: var(--radius-sm); cursor: pointer; margin-top: 8px; }
-  .color-grid { display: grid; grid-template-columns: repeat(5, 24px); gap: 5px; }
-  .cp-swatch { width: 24px; height: 24px; border-radius: 50%; cursor: pointer; transition: transform var(--transition); border: 2px solid transparent; }
-  .cp-swatch:hover { transform: scale(1.2); }
+.tb-div{width:1px;height:22px;background:var(--border-strong);margin:0 3px;flex-shrink:0;}
 
-  /* LASSO */
-  #lasso-handles { position: absolute; pointer-events: none; }
+/* Color swatches row2 */
+.csw{width:19px;height:19px;border-radius:50%;cursor:pointer;
+  border:2.5px solid transparent;transition:border-color var(--tr),transform var(--tr);flex-shrink:0;}
+.csw:hover{transform:scale(1.18);}
+.csw.active{border-color:var(--accent);}
 
-  /* SCROLLBARS */
-  #canvas-scroll::-webkit-scrollbar { width: 8px; height: 8px; }
-  #canvas-scroll::-webkit-scrollbar-track { background: transparent; }
-  #canvas-scroll::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
+/* Size row2 */
+.sz-wrap{display:flex;align-items:center;gap:5px;flex-shrink:0;}
+.sz-wrap label{font-size:11px;color:var(--text-secondary);}
+#stroke-size{width:60px;accent-color:var(--accent);}
+#sz-label{font-size:11px;color:var(--text-secondary);min-width:18px;text-align:right;}
 
-  /* TOOLTIP for pressure */
-  #pressure-indicator { position: absolute; top: 8px; right: 8px; background: var(--bg-toolbar); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 4px 10px; font-size: 11px; color: var(--text-secondary); pointer-events: none; opacity: 0; transition: opacity 0.3s; }
-  #pressure-indicator.visible { opacity: 1; }
+/* Paper buttons row2 */
+.pp-btn{padding:4px 8px;border-radius:var(--r-sm);border:1px solid var(--border-color);
+  background:var(--bg-secondary);font-size:11px;color:var(--text-secondary);
+  cursor:pointer;transition:all var(--tr);flex-shrink:0;}
+.pp-btn:hover,.pp-btn.active{background:var(--accent-light);color:var(--accent);border-color:var(--accent);}
 
-  /* PAPER BG SELECTOR */
-  .paper-btn { padding: 5px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); background: var(--bg-secondary); font-size: 11.5px; color: var(--text-secondary); cursor: pointer; transition: all var(--transition); }
-  .paper-btn:hover, .paper-btn.active { background: var(--accent-light); color: var(--accent); border-color: var(--accent); }
+/* Page title input */
+#pg-title{background:none;border:none;outline:none;font-size:13px;font-weight:600;
+  color:var(--text-primary);text-align:center;flex:1;min-width:60px;max-width:180px;}
+#pg-title::placeholder{color:var(--text-tertiary);font-weight:400;}
 
-  /* NOTIFICATION TOAST */
-  #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(10px); background: var(--text-primary); color: var(--bg-primary); padding: 9px 18px; border-radius: 30px; font-size: 13px; font-weight: 500; z-index: 9999; opacity: 0; transition: all 0.3s; pointer-events: none; white-space: nowrap; }
-  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+/* ── CANVAS AREA ── */
+#canvas-area{flex:1;overflow:hidden;position:relative;background:var(--bg-primary);touch-action:none;}
+#canvas-scroll{position:absolute;inset:0;overflow:auto;display:flex;
+  align-items:flex-start;justify-content:center;padding:24px;}
+#canvas-scroll::-webkit-scrollbar{width:7px;height:7px;}
+#canvas-scroll::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:4px;}
+#page-wrap{position:relative;flex-shrink:0;}
+#page-wrap canvas{position:absolute;inset:0;border-radius:2px;}
+#draw-canvas{cursor:crosshair;touch-action:none;}
+#overlay-canvas{pointer-events:none;}
+#bg-canvas{pointer-events:none;}
 
-  @media (max-width: 700px) {
-    #sidebar { position: absolute; height: 100%; box-shadow: var(--shadow-lg); }
-    #sidebar:not(.collapsed) ~ #main { margin-left: 0; }
-  }
+/* ── STATUS BAR ── */
+#status-bar{height:24px;background:var(--bg-secondary);border-top:1px solid var(--border-color);
+  display:flex;align-items:center;padding:0 12px;gap:12px;flex-shrink:0;overflow:hidden;}
+.st{font-size:10.5px;color:var(--text-tertiary);white-space:nowrap;}
+#palm-badge{background:#22C55E;color:#fff;font-size:9.5px;font-weight:700;
+  padding:1px 5px;border-radius:8px;}
+#status-bar .st:last-child{margin-left:auto;}
+
+/* ── COLOR POPUP ── */
+#color-popup{position:fixed;background:var(--bg-toolbar);backdrop-filter:blur(20px);
+  border:1px solid var(--border-color);border-radius:var(--r-lg);padding:10px;
+  box-shadow:var(--shadow-lg);z-index:500;display:none;}
+#color-popup.open{display:block;}
+.cp-grid{display:grid;grid-template-columns:repeat(5,22px);gap:4px;}
+.cp-sw{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid transparent;
+  transition:transform var(--tr);}
+.cp-sw:hover{transform:scale(1.2);}
+#hex-input{width:100%;height:32px;border:none;border-radius:var(--r-sm);cursor:pointer;margin-top:7px;}
+
+/* ── MODALS ── */
+.mbk{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:600;
+  display:flex;align-items:center;justify-content:center;
+  backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity var(--tr);}
+.mbk.open{opacity:1;pointer-events:all;}
+.modal{background:var(--bg-primary);border-radius:var(--r-xl);padding:22px;
+  max-width:400px;width:90%;box-shadow:var(--shadow-lg);
+  transform:scale(0.96);transition:transform var(--tr);}
+.mbk.open .modal{transform:scale(1);}
+.modal h2{font-size:17px;font-weight:700;margin-bottom:6px;}
+.modal p{font-size:13px;color:var(--text-secondary);margin-bottom:16px;}
+.m-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;}
+.m-btn{padding:7px 16px;border-radius:var(--r-md);border:none;cursor:pointer;
+  font-size:13px;font-weight:500;transition:background var(--tr);}
+.m-btn.sec{background:var(--bg-secondary);color:var(--text-primary);}
+.m-btn.sec:hover{background:var(--border-color);}
+.m-btn.pri{background:var(--accent);color:#fff;}
+.m-btn.pri:hover{background:var(--accent-hover);}
+.sw-row{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 0;border-bottom:1px solid var(--border-color);font-size:13px;}
+.sw-row:last-child{border-bottom:none;}
+.sw-row .sw-label div:first-child{font-weight:500;}
+.sw-row .sw-label div:last-child{font-size:11.5px;color:var(--text-secondary);margin-top:1px;}
+.sw-row input[type=checkbox]{width:17px;height:17px;accent-color:var(--accent);cursor:pointer;}
+.exp-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px;}
+.exp-card{border:1px solid var(--border-color);border-radius:var(--r-md);
+  padding:14px;text-align:center;cursor:pointer;transition:background var(--tr);}
+.exp-card:hover{background:var(--bg-secondary);}
+.exp-card .ei{font-size:28px;margin-bottom:5px;}
+.exp-card .et{font-size:13px;font-weight:600;}
+.exp-card .ed{font-size:11px;color:var(--text-secondary);}
+
+/* ── CONTEXT MENU ── */
+#ctx{position:fixed;background:var(--bg-toolbar);backdrop-filter:blur(20px);
+  border:1px solid var(--border-color);border-radius:var(--r-md);
+  box-shadow:var(--shadow-lg);padding:5px;z-index:700;display:none;min-width:150px;}
+.ci{padding:6px 11px;border-radius:var(--r-sm);cursor:pointer;font-size:13px;
+  color:var(--text-primary);display:flex;align-items:center;gap:7px;transition:background var(--tr);}
+.ci:hover{background:var(--bg-secondary);}
+.ci.red{color:#EF4444;}
+.cd{height:1px;background:var(--border-color);margin:3px 0;}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(8px);
+  background:var(--text-primary);color:var(--bg-primary);padding:8px 16px;border-radius:24px;
+  font-size:12.5px;font-weight:500;z-index:9999;opacity:0;transition:all 0.25s;
+  pointer-events:none;white-space:nowrap;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ── PRESSURE HINT ── */
+#pressure-hint{position:absolute;top:8px;right:10px;background:var(--bg-toolbar);
+  border:1px solid var(--border-color);border-radius:var(--r-sm);
+  padding:3px 9px;font-size:11px;color:var(--text-secondary);
+  pointer-events:none;opacity:0;transition:opacity 0.3s;}
+#pressure-hint.on{opacity:1;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:640px){
+  :root{--sidebar-w:200px;--row1-h:44px;--row2-h:40px;--toolbar-h:84px;}
+  #pg-title{display:none;}
+  .tb-div{margin:0 1px;}
+  #sz-label{display:none;}
+  #stroke-size{width:50px;}
+  .pp-btn{padding:3px 6px;font-size:10.5px;}
+}
+@media(max-width:420px){
+  :root{--row2-h:36px;}
+  .pp-btn{display:none;}
+  #paper-row{display:none;}
+}
 </style>
 </head>
 <body data-theme="light">
 <div id="app">
-  <!-- SIDEBAR -->
-  <nav id="sidebar">
-    <div id="sidebar-header">
-      <h1>✒ InkPad</h1>
-      <button class="sidebar-new-btn" id="new-page-btn" title="New page">+</button>
-    </div>
-    <div id="sidebar-search">
-      <span class="search-icon">🔍</span>
-      <input type="text" placeholder="Search pages…" id="search-input">
-    </div>
-    <div class="sidebar-section">
-      <div class="sidebar-section-label">Notebooks</div>
-      <div id="notebooks-list"></div>
-    </div>
-    <div class="sidebar-section" style="margin-top:8px;">
-      <div class="sidebar-section-label">Pages</div>
-    </div>
-    <div class="pages-list" id="pages-list"></div>
-    <div class="sidebar-footer">
-      <button class="sidebar-footer-btn" id="dark-mode-btn" title="Toggle dark mode">🌙</button>
-      <button class="sidebar-footer-btn" id="export-btn" title="Export page">📤</button>
-      <button class="sidebar-footer-btn" id="settings-btn" title="Palm rejection & settings">🛡</button>
-    </div>
-  </nav>
 
-  <!-- MAIN -->
-  <div id="main">
-    <!-- TOOLBAR -->
-    <div id="toolbar">
-      <div id="toolbar-left">
-        <button class="tb-btn" id="sidebar-toggle" title="Toggle sidebar">
-          ☰<span class="tb-tooltip">Sidebar</span>
-        </button>
-        <div class="tb-divider"></div>
+<!-- ── SIDEBAR ── -->
+<nav id="sidebar">
+  <div id="sb-header">
+    <h1>✒ InkPad</h1>
+    <button class="sb-new" id="new-page-btn" title="New page">+</button>
+  </div>
+  <div id="sb-search"><span class="si">🔍</span><input type="text" placeholder="Search pages…" id="search-input"></div>
+  <div class="sb-sec">Notebooks</div>
+  <div id="notebooks-list"></div>
+  <div class="sb-sec" style="margin-top:8px;">Pages</div>
+  <div id="pages-list"></div>
+  <div id="sb-footer">
+    <button class="sb-foot-btn" id="dark-mode-btn" title="Dark mode">🌙</button>
+    <button class="sb-foot-btn" id="export-btn" title="Export">📤<span>Export</span></button>
+    <button class="sb-foot-btn" id="settings-btn" title="Settings">🛡<span>Settings</span></button>
+  </div>
+</nav>
+
+<!-- ── MAIN ── -->
+<div id="main">
+
+  <!-- TOOLBAR -->
+  <div id="toolbar">
+
+    <!-- ROW 1: sidebar toggle | tools | divider | undo redo clear | divider | title | zoom -->
+    <div id="tb-row1">
+      <button class="tb-btn" id="sidebar-toggle" title="Sidebar">☰<span class="tip">Sidebar</span></button>
+      <div class="tb-div"></div>
+
+      <!-- Drawing tools -->
+      <div class="tg">
+        <button class="tb-btn active" data-tool="fountain" title="Fountain Pen">🖊<span class="tip">Fountain</span></button>
+        <button class="tb-btn" data-tool="ballpoint" title="Ballpoint">🖋<span class="tip">Ballpoint</span></button>
+        <button class="tb-btn" data-tool="highlighter" title="Highlighter">✏️<span class="tip">Highlighter</span></button>
+        <button class="tb-btn" data-tool="pencil" title="Pencil">✎<span class="tip">Pencil</span></button>
       </div>
 
-      <div id="toolbar-center">
-        <!-- TOOLS -->
-        <div class="tool-group" id="tool-group">
-          <button class="tb-btn active" data-tool="fountain" title="Fountain Pen">
-            🖊<span class="tb-tooltip">Fountain Pen</span>
-          </button>
-          <button class="tb-btn" data-tool="ballpoint" title="Ballpoint">
-            🖋<span class="tb-tooltip">Ballpoint</span>
-          </button>
-          <button class="tb-btn" data-tool="highlighter" title="Highlighter">
-            ✏️<span class="tb-tooltip">Highlighter</span>
-          </button>
-          <button class="tb-btn" data-tool="pencil" title="Pencil">
-            ✎<span class="tb-tooltip">Pencil</span>
-          </button>
-        </div>
-        <div class="tb-divider"></div>
-
-        <!-- ERASER / SELECTION -->
-        <div class="tool-group">
-          <button class="tb-btn" data-tool="eraser-pixel" title="Pixel Eraser">
-            ◻<span class="tb-tooltip">Pixel Eraser</span>
-          </button>
-          <button class="tb-btn" data-tool="eraser-stroke" title="Stroke Eraser">
-            ⌫<span class="tb-tooltip">Stroke Eraser</span>
-          </button>
-          <button class="tb-btn" data-tool="lasso" title="Lasso Select">
-            ⌾<span class="tb-tooltip">Lasso</span>
-          </button>
-        </div>
-        <div class="tb-divider"></div>
-
-        <!-- STROKE SIZE -->
-        <div class="size-slider-wrap">
-          <label>Size</label>
-          <input type="range" id="stroke-size" min="0.5" max="20" step="0.5" value="2">
-          <label id="stroke-size-label" style="min-width:22px;text-align:right;font-size:11px;color:var(--text-secondary);">2</label>
-        </div>
-        <div class="tb-divider"></div>
-
-        <!-- COLORS -->
-        <div style="display:flex;align-items:center;gap:5px;position:relative;">
-          <div class="color-swatch active" style="background:#1A1A18;" data-color="#1A1A18"></div>
-          <div class="color-swatch" style="background:#1D4ED8;" data-color="#1D4ED8"></div>
-          <div class="color-swatch" style="background:#DC2626;" data-color="#DC2626"></div>
-          <div class="color-swatch" style="background:#16A34A;" data-color="#16A34A"></div>
-          <div class="color-swatch" style="background:#9333EA;" data-color="#9333EA"></div>
-          <div class="color-swatch" style="background:#EA580C;" data-color="#EA580C"></div>
-          <div class="color-swatch" id="custom-color-btn" style="background: conic-gradient(red,yellow,lime,cyan,blue,magenta,red); border-color: transparent;" title="Custom color">
-          </div>
-          <div id="color-popup">
-            <div class="color-grid" id="color-grid"></div>
-            <input type="color" id="hex-color-input" value="#1A1A18">
-            <div style="font-size:10.5px;color:var(--text-tertiary);margin-top:4px;text-align:center;">Custom color</div>
-          </div>
-        </div>
-
-        <div class="tb-divider"></div>
-        <!-- PAPER TYPE -->
-        <div style="display:flex;gap:3px;">
-          <button class="paper-btn active" data-paper="blank">Blank</button>
-          <button class="paper-btn" data-paper="ruled">Ruled</button>
-          <button class="paper-btn" data-paper="grid">Grid</button>
-          <button class="paper-btn" data-paper="dot">Dot</button>
-        </div>
+      <!-- Eraser + Lasso -->
+      <div class="tg" style="margin-left:3px;">
+        <button class="tb-btn" data-tool="eraser-pixel" title="Pixel Eraser">◻<span class="tip">Px Erase</span></button>
+        <button class="tb-btn" data-tool="eraser-stroke" title="Stroke Eraser">⌫<span class="tip">Stroke Erase</span></button>
+        <button class="tb-btn" data-tool="lasso" title="Lasso">⌾<span class="tip">Lasso</span></button>
       </div>
 
-      <div id="toolbar-right">
-        <div class="tb-divider"></div>
-        <button class="tb-btn" id="undo-btn" title="Undo">↩<span class="tb-tooltip">Undo</span></button>
-        <button class="tb-btn" id="redo-btn" title="Redo">↪<span class="tb-tooltip">Redo</span></button>
-        <button class="tb-btn" id="zoom-fit-btn" title="Fit to window">⊞<span class="tb-tooltip">Fit to window</span></button>
-        <div id="page-title-wrap" style="margin-left:6px;">
-          <input type="text" id="page-title-input" placeholder="Untitled Page" maxlength="60">
-        </div>
+      <div class="tb-div"></div>
+
+      <!-- UNDO / REDO / CLEAR — always visible with labels -->
+      <button class="act-btn" id="undo-btn">↩ Undo</button>
+      <button class="act-btn" id="redo-btn">↪ Redo</button>
+      <button class="act-btn danger" id="clear-btn">🗑 Clear</button>
+
+      <div class="tb-div"></div>
+
+      <!-- Page title -->
+      <input type="text" id="pg-title" placeholder="Untitled Page" maxlength="60">
+
+      <!-- Zoom -->
+      <div style="margin-left:auto;display:flex;align-items:center;gap:3px;flex-shrink:0;">
+        <button class="tb-btn" id="zoom-out-btn">−<span class="tip">Zoom out</span></button>
+        <span id="zoom-label" style="font-size:11px;color:var(--text-secondary);min-width:36px;text-align:center;">100%</span>
+        <button class="tb-btn" id="zoom-in-btn">+<span class="tip">Zoom in</span></button>
+        <button class="tb-btn" id="zoom-fit-btn">⊞<span class="tip">Fit page</span></button>
       </div>
     </div>
 
-    <!-- CANVAS -->
-    <div id="canvas-area">
-      <div id="canvas-scroll">
-        <div id="page-container">
-          <canvas id="bg-canvas"></canvas>
-          <canvas id="draw-canvas"></canvas>
-          <canvas id="overlay-canvas"></canvas>
-        </div>
-      </div>
-      <div id="pressure-indicator">Pressure: 0%</div>
-      <div id="lasso-handles"></div>
-    </div>
+    <!-- ROW 2: colors | divider | size | divider | paper type -->
+    <div id="tb-row2">
+      <!-- Color swatches -->
+      <div class="csw active" style="background:#1A1A18;" data-color="#1A1A18"></div>
+      <div class="csw" style="background:#1D4ED8;" data-color="#1D4ED8"></div>
+      <div class="csw" style="background:#DC2626;" data-color="#DC2626"></div>
+      <div class="csw" style="background:#16A34A;" data-color="#16A34A"></div>
+      <div class="csw" style="background:#9333EA;" data-color="#9333EA"></div>
+      <div class="csw" style="background:#EA580C;" data-color="#EA580C"></div>
+      <div class="csw" style="background:#0891B2;" data-color="#0891B2"></div>
+      <div class="csw" id="custom-color-btn"
+           style="background:conic-gradient(red,yellow,lime,cyan,blue,magenta,red);border-color:transparent;"
+           title="Custom color"></div>
 
-    <!-- STATUS BAR -->
-    <div id="status-bar">
-      <div class="status-item" id="status-tool">🖊 Fountain Pen</div>
-      <div class="status-item" id="status-zoom">Zoom: 100%</div>
-      <div class="status-item" id="status-coords">x: 0, y: 0</div>
-      <div class="status-item" id="status-strokes">Strokes: 0</div>
-      <div class="status-item"><span id="palm-reject-badge" class="active">Palm Rejection ON</span></div>
-      <div class="status-item" id="status-save" style="margin-left:auto;">● Saved</div>
+      <div class="tb-div"></div>
+
+      <!-- Stroke size -->
+      <div class="sz-wrap">
+        <label>Size</label>
+        <input type="range" id="stroke-size" min="0.5" max="20" step="0.5" value="2">
+        <span id="sz-label">2</span>
+      </div>
+
+      <div class="tb-div" id="paper-row"></div>
+
+      <!-- Paper type -->
+      <button class="pp-btn active" data-paper="blank">Blank</button>
+      <button class="pp-btn" data-paper="ruled">Ruled</button>
+      <button class="pp-btn" data-paper="grid">Grid</button>
+      <button class="pp-btn" data-paper="dot">Dot</button>
     </div>
   </div>
+
+  <!-- CANVAS -->
+  <div id="canvas-area">
+    <div id="canvas-scroll">
+      <div id="page-wrap">
+        <canvas id="bg-canvas"></canvas>
+        <canvas id="draw-canvas"></canvas>
+        <canvas id="overlay-canvas"></canvas>
+      </div>
+    </div>
+    <div id="pressure-hint">Pressure: 50%</div>
+  </div>
+
+  <!-- STATUS BAR -->
+  <div id="status-bar">
+    <span class="st" id="st-tool">🖊 Fountain Pen</span>
+    <span class="st" id="st-strokes">Strokes: 0</span>
+    <span class="st" id="st-coords">x:0 y:0</span>
+    <span class="st"><span id="palm-badge">Palm Rejection ON</span></span>
+    <span class="st" id="st-save" style="margin-left:auto;">● Saved</span>
+  </div>
+</div><!-- /main -->
+</div><!-- /app -->
+
+<!-- COLOR POPUP -->
+<div id="color-popup">
+  <div class="cp-grid" id="cp-grid"></div>
+  <input type="color" id="hex-input" value="#1A1A18">
+  <div style="font-size:10px;color:var(--text-tertiary);margin-top:4px;text-align:center;">Custom hex color</div>
 </div>
 
 <!-- CONTEXT MENU -->
-<div id="context-menu">
-  <div class="ctx-item" id="ctx-undo">↩ Undo</div>
-  <div class="ctx-item" id="ctx-redo">↪ Redo</div>
-  <div class="ctx-divider"></div>
-  <div class="ctx-item" id="ctx-clear-page">🗑 Clear Page</div>
-  <div class="ctx-item danger" id="ctx-delete-page">✕ Delete Page</div>
+<div id="ctx">
+  <div class="ci" id="ctx-undo">↩ Undo</div>
+  <div class="ci" id="ctx-redo">↪ Redo</div>
+  <div class="cd"></div>
+  <div class="ci" id="ctx-select-del">✕ Delete Selected</div>
+  <div class="ci" id="ctx-clear">🗑 Clear Page</div>
+  <div class="cd"></div>
+  <div class="ci red" id="ctx-del-page">✕ Delete Page</div>
 </div>
 
 <!-- EXPORT MODAL -->
-<div class="modal-backdrop" id="export-modal">
+<div class="mbk" id="export-modal">
   <div class="modal">
     <h2>Export Page</h2>
-    <p>Choose your export format. PNG exports the current page at 2× resolution. PDF wraps it in a printable document.</p>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;">
-      <div style="border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;text-align:center;cursor:pointer;transition:background var(--transition);" id="export-png-card" onmouseenter="this.style.background='var(--bg-secondary)'" onmouseleave="this.style.background=''">
-        <div style="font-size:32px;margin-bottom:6px;">🖼</div>
-        <div style="font-weight:600;font-size:14px;">PNG</div>
-        <div style="font-size:12px;color:var(--text-secondary);">High-res image</div>
-      </div>
-      <div style="border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;text-align:center;cursor:pointer;transition:background var(--transition);" id="export-pdf-card" onmouseenter="this.style.background='var(--bg-secondary)'" onmouseleave="this.style.background=''">
-        <div style="font-size:32px;margin-bottom:6px;">📄</div>
-        <div style="font-weight:600;font-size:14px;">PDF</div>
-        <div style="font-size:12px;color:var(--text-secondary);">Print-ready document</div>
-      </div>
+    <p>Download the current page as a high-resolution image or a print-ready PDF.</p>
+    <div class="exp-grid">
+      <div class="exp-card" id="exp-png"><div class="ei">🖼</div><div class="et">PNG</div><div class="ed">High-res image</div></div>
+      <div class="exp-card" id="exp-pdf"><div class="ei">📄</div><div class="et">PDF</div><div class="ed">Print-ready</div></div>
     </div>
-    <div class="modal-actions">
-      <button class="modal-btn secondary" id="export-cancel">Cancel</button>
-    </div>
+    <div class="m-actions"><button class="m-btn sec" id="exp-cancel">Cancel</button></div>
   </div>
 </div>
 
 <!-- SETTINGS MODAL -->
-<div class="modal-backdrop" id="settings-modal">
+<div class="mbk" id="settings-modal">
   <div class="modal">
-    <h2>Stylus & Input Settings</h2>
-    <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:20px;">
-      <label style="display:flex;align-items:center;justify-content:space-between;font-size:14px;">
-        <div>
-          <div style="font-weight:500;">Palm Rejection</div>
-          <div style="font-size:12px;color:var(--text-secondary);">Ignore touch while stylus is active</div>
-        </div>
-        <input type="checkbox" id="setting-palm" checked style="width:18px;height:18px;accent-color:var(--accent);">
-      </label>
-      <label style="display:flex;align-items:center;justify-content:space-between;font-size:14px;">
-        <div>
-          <div style="font-weight:500;">Stylus Only Mode</div>
-          <div style="font-size:12px;color:var(--text-secondary);">Only pen input draws; touch pans/zooms</div>
-        </div>
-        <input type="checkbox" id="setting-stylus-only" style="width:18px;height:18px;accent-color:var(--accent);">
-      </label>
-      <label style="display:flex;align-items:center;justify-content:space-between;font-size:14px;">
-        <div>
-          <div style="font-weight:500;">Pressure Sensitivity</div>
-          <div style="font-size:12px;color:var(--text-secondary);">Vary stroke weight with stylus pressure</div>
-        </div>
-        <input type="checkbox" id="setting-pressure" checked style="width:18px;height:18px;accent-color:var(--accent);">
-      </label>
-      <label style="display:flex;align-items:center;justify-content:space-between;font-size:14px;">
-        <div>
-          <div style="font-weight:500;">Stroke Smoothing</div>
-          <div style="font-size:12px;color:var(--text-secondary);">Catmull-Rom spline smoothing on strokes</div>
-        </div>
-        <input type="checkbox" id="setting-smooth" checked style="width:18px;height:18px;accent-color:var(--accent);">
-      </label>
-      <label style="display:flex;align-items:center;justify-content:space-between;font-size:14px;">
-        <div>
-          <div style="font-weight:500;">Touch to Erase</div>
-          <div style="font-size:12px;color:var(--text-secondary);">Two-finger touch acts as eraser</div>
-        </div>
-        <input type="checkbox" id="setting-touch-erase" style="width:18px;height:18px;accent-color:var(--accent);">
-      </label>
+    <h2>🛡 Stylus & Input</h2>
+    <div class="sw-row">
+      <div class="sw-label"><div>Palm Rejection</div><div>Ignore touch while pen is active</div></div>
+      <input type="checkbox" id="s-palm" checked>
     </div>
-    <div class="modal-actions">
-      <button class="modal-btn primary" id="settings-close">Done</button>
+    <div class="sw-row">
+      <div class="sw-label"><div>Stylus Only Mode</div><div>Touch pans/zooms only, never draws</div></div>
+      <input type="checkbox" id="s-stylus-only">
     </div>
+    <div class="sw-row">
+      <div class="sw-label"><div>Pressure Sensitivity</div><div>Vary weight with stylus pressure</div></div>
+      <input type="checkbox" id="s-pressure" checked>
+    </div>
+    <div class="sw-row">
+      <div class="sw-label"><div>Stroke Smoothing</div><div>Catmull-Rom spline on every stroke</div></div>
+      <input type="checkbox" id="s-smooth" checked>
+    </div>
+    <div class="sw-row">
+      <div class="sw-label"><div>Two-finger Erase</div><div>Two-touch contact erases strokes</div></div>
+      <input type="checkbox" id="s-touch-erase">
+    </div>
+    <div class="m-actions"><button class="m-btn pri" id="s-close">Done</button></div>
   </div>
 </div>
 
-<!-- TOAST -->
 <div id="toast"></div>
 
 <script>
-// ============================================================
-// INKPAD — Core Application
-// ============================================================
-
-const PAGE_W = 794; // A4 at 96dpi
-const PAGE_H = 1123;
-const PAPER_COLORS = {
-  light: { blank: '#FFFFFF', ruled: '#FFFEF9', grid: '#FAFCFF', dot: '#FAFCFF' },
-  dark:  { blank: '#1E1E1B', ruled: '#1C1D18', grid: '#1A1C20', dot: '#1A1C20' }
+// ══════════════════════════════════════════
+//  INKPAD  —  Core Engine
+// ══════════════════════════════════════════
+const PAGE_W = 794, PAGE_H = 1123;
+const PAPER_BG = {
+  light:{ blank:'#FFFFFF', ruled:'#FFFEF9', grid:'#FAFCFF', dot:'#FAFCFF' },
+  dark: { blank:'#1E1E1B', ruled:'#1C1D18', grid:'#1A1C20', dot:'#1A1C20' }
 };
 
-// ---- State ----
-let state = {
-  notebooks: [{ id: 'nb1', name: 'My Notebook', icon: '📓' }],
-  pages: [],
-  activeNotebook: 'nb1',
-  activePage: null,
-  strokes: {}, // pageId -> stroke array
-  redoStack: {},
-  zoom: 1,
-  panX: 0, panY: 0,
-  tool: 'fountain',
-  color: '#1A1A18',
-  size: 2,
-  paperType: 'blank',
-  darkMode: false,
-  settings: { palmReject: true, stylusOnly: false, pressure: true, smooth: true, touchErase: false },
-  isDrawing: false,
-  currentStroke: null,
-  penActive: false,
-  penActiveTime: 0,
-  lasso: { active: false, path: [], selectedIds: [] },
-  pinch: { active: false, lastDist: 0, lastScale: 1 }
+// ── State ──
+let S = {
+  notebooks:[{id:'nb1',name:'My Notebook',icon:'📓'}],
+  pages:[], activeNotebook:'nb1', activePage:null,
+  strokes:{}, redoStack:{},
+  zoom:1, tool:'fountain', color:'#1A1A18', size:2, paperType:'blank',
+  darkMode:false,
+  settings:{palmReject:true,stylusOnly:false,pressure:true,smooth:true,touchErase:false},
+  isDrawing:false, currentStroke:null,
+  penActive:false, penActiveTime:0,
+  pinchActive:false, pinchDist:0, pinchZoom:1,
+  touchPositions:{}
 };
 
-// ---- Canvas refs ----
-const bgCanvas = document.getElementById('bg-canvas');
-const drawCanvas = document.getElementById('draw-canvas');
-const overlayCanvas = document.getElementById('overlay-canvas');
-const bgCtx = bgCanvas.getContext('2d');
-const drawCtx = drawCanvas.getContext('2d');
-const overlayCtx = overlayCanvas.getContext('2d');
-const pageContainer = document.getElementById('page-container');
-const canvasScroll = document.getElementById('canvas-scroll');
+// ── Canvas refs ──
+const bgC  = document.getElementById('bg-canvas');
+const drC  = document.getElementById('draw-canvas');
+const ovC  = document.getElementById('overlay-canvas');
+const bgX  = bgC.getContext('2d');
+const drX  = drC.getContext('2d');
+const ovX  = ovC.getContext('2d');
+const pageWrap  = document.getElementById('page-wrap');
+const csScroll  = document.getElementById('canvas-scroll');
 
-// ---- DB (IndexedDB via simple wrapper) ----
+// ── IndexedDB ──
 let db = null;
-const DB_NAME = 'inkpad_db';
-const DB_VER = 2;
-
-function openDB() {
-  return new Promise((res, rej) => {
-    const req = indexedDB.open(DB_NAME, DB_VER);
-    req.onupgradeneeded = e => {
+const DB_NAME = 'inkpad2', DB_VER = 1;
+function openDB(){
+  return new Promise((res,rej)=>{
+    const r = indexedDB.open(DB_NAME, DB_VER);
+    r.onupgradeneeded = e => {
       const d = e.target.result;
-      if (!d.objectStoreNames.contains('state')) d.createObjectStore('state');
-      if (!d.objectStoreNames.contains('strokes')) d.createObjectStore('strokes');
+      if(!d.objectStoreNames.contains('state'))   d.createObjectStore('state');
+      if(!d.objectStoreNames.contains('strokes')) d.createObjectStore('strokes');
     };
-    req.onsuccess = e => { db = e.target.result; res(db); };
-    req.onerror = () => rej(req.error);
+    r.onsuccess = e => { db = e.target.result; res(db); };
+    r.onerror   = ()=> rej(r.error);
   });
 }
+function dbPut(store,key,val){ if(!db)return; const tx=db.transaction(store,'readwrite'); tx.objectStore(store).put(val,key); }
+function dbGet(store,key){ return new Promise(res=>{ if(!db)return res(null); const tx=db.transaction(store,'readonly'); const r=tx.objectStore(store).get(key); r.onsuccess=()=>res(r.result||null); r.onerror=()=>res(null); }); }
 
-function dbPut(store, key, val) {
-  if (!db) return;
-  const tx = db.transaction(store, 'readwrite');
-  tx.objectStore(store).put(val, key);
+// ── Save ──
+let saveTimer=null;
+function scheduleSave(){
+  document.getElementById('st-save').textContent='● Saving…';
+  clearTimeout(saveTimer); saveTimer=setTimeout(doSave,800);
+}
+function doSave(){
+  dbPut('state','meta',{notebooks:S.notebooks,pages:S.pages,activeNotebook:S.activeNotebook,activePage:S.activePage,settings:S.settings,darkMode:S.darkMode});
+  if(S.activePage) dbPut('strokes',S.activePage,S.strokes[S.activePage]||[]);
+  document.getElementById('st-save').textContent='● Saved';
 }
 
-function dbGet(store, key) {
-  return new Promise((res) => {
-    if (!db) return res(null);
-    const tx = db.transaction(store, 'readonly');
-    const req = tx.objectStore(store).get(key);
-    req.onsuccess = () => res(req.result || null);
-    req.onerror = () => res(null);
-  });
-}
+// ── IDs ──
+function genId(){ return 'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,5); }
 
-// ---- Save / Load ----
-let saveTimer = null;
-function scheduleSave() {
-  document.getElementById('status-save').textContent = '● Saving…';
-  clearTimeout(saveTimer);
-  saveTimer = setTimeout(doSave, 800);
+// ── Page management ──
+function createPage(title){
+  const id=genId();
+  S.pages.push({id,title:title||'Untitled Page',notebookId:S.activeNotebook,created:Date.now(),paperType:S.paperType});
+  S.strokes[id]=[]; S.redoStack[id]=[];
+  S.activePage=id;
+  renderSidebar(); setActivePage(id); scheduleSave();
 }
-
-function doSave() {
-  const meta = { notebooks: state.notebooks, pages: state.pages, activeNotebook: state.activeNotebook, activePage: state.activePage, settings: state.settings, darkMode: state.darkMode };
-  dbPut('state', 'meta', meta);
-  if (state.activePage) {
-    dbPut('strokes', state.activePage, state.strokes[state.activePage] || []);
+function deletePage(id){
+  S.pages=S.pages.filter(p=>p.id!==id); delete S.strokes[id];
+  if(S.activePage===id) S.activePage=S.pages.length?S.pages[S.pages.length-1].id:null;
+  if(!S.pages.length) createPage('Untitled Page');
+  else{ renderSidebar(); setActivePage(S.activePage); }
+  scheduleSave();
+}
+async function setActivePage(id){
+  S.activePage=id;
+  const page=S.pages.find(p=>p.id===id); if(!page)return;
+  document.getElementById('pg-title').value=page.title;
+  S.paperType=page.paperType||'blank';
+  document.querySelectorAll('.pp-btn').forEach(b=>b.classList.toggle('active',b.dataset.paper===S.paperType));
+  if(!S.strokes[id]){
+    const sd=await dbGet('strokes',id);
+    S.strokes[id]=sd||[]; S.redoStack[id]=[];
   }
-  document.getElementById('status-save').textContent = '● Saved';
+  clearSelection();
+  renderBg(); redrawStrokes(); renderSidebar(); updateStatus(); scheduleSave();
 }
 
-async function loadAll() {
+// ── Load ──
+async function loadAll(){
   await openDB();
-  const meta = await dbGet('state', 'meta');
-  if (meta) {
-    state.notebooks = meta.notebooks || state.notebooks;
-    state.pages = meta.pages || [];
-    state.activeNotebook = meta.activeNotebook || 'nb1';
-    state.activePage = meta.activePage;
-    state.settings = { ...state.settings, ...meta.settings };
-    state.darkMode = meta.darkMode || false;
-    if (state.darkMode) document.body.dataset.theme = 'dark';
+  const meta=await dbGet('state','meta');
+  if(meta){
+    S.notebooks=meta.notebooks||S.notebooks;
+    S.pages=meta.pages||[];
+    S.activeNotebook=meta.activeNotebook||'nb1';
+    S.activePage=meta.activePage;
+    S.settings={...S.settings,...meta.settings};
+    S.darkMode=meta.darkMode||false;
+    if(S.darkMode) document.body.dataset.theme='dark';
     syncSettingsUI();
   }
-  if (!state.pages.length) createPage('Untitled Page');
-  else {
-    if (!state.activePage || !state.pages.find(p => p.id === state.activePage))
-      state.activePage = state.pages[0].id;
-    const strokeData = await dbGet('strokes', state.activePage);
-    if (strokeData) state.strokes[state.activePage] = strokeData;
-    setActivePage(state.activePage);
+  if(!S.pages.length) createPage('Untitled Page');
+  else{
+    if(!S.activePage||!S.pages.find(p=>p.id===S.activePage)) S.activePage=S.pages[0].id;
+    const sd=await dbGet('strokes',S.activePage);
+    if(sd) S.strokes[S.activePage]=sd;
+    setActivePage(S.activePage);
   }
-  renderSidebar();
-  updateZoom();
+  renderSidebar(); setZoom(1);
 }
 
-// ---- Page Management ----
-function genId() { return 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2,5); }
-
-function createPage(title) {
-  const id = genId();
-  const page = { id, title: title || 'Untitled Page', notebookId: state.activeNotebook, created: Date.now(), paperType: state.paperType };
-  state.pages.push(page);
-  state.strokes[id] = [];
-  state.redoStack[id] = [];
-  state.activePage = id;
-  renderSidebar();
-  setActivePage(id);
-  scheduleSave();
-}
-
-function deletePage(id) {
-  state.pages = state.pages.filter(p => p.id !== id);
-  delete state.strokes[id];
-  if (state.activePage === id) state.activePage = state.pages.length ? state.pages[state.pages.length - 1].id : null;
-  if (!state.pages.length) createPage('Untitled Page');
-  else { renderSidebar(); setActivePage(state.activePage); }
-  scheduleSave();
-}
-
-async function setActivePage(id) {
-  state.activePage = id;
-  const page = state.pages.find(p => p.id === id);
-  if (!page) return;
-  document.getElementById('page-title-input').value = page.title;
-  state.paperType = page.paperType || 'blank';
-  document.querySelectorAll('.paper-btn').forEach(b => b.classList.toggle('active', b.dataset.paper === state.paperType));
-  if (!state.strokes[id]) {
-    const sd = await dbGet('strokes', id);
-    state.strokes[id] = sd || [];
-    state.redoStack[id] = [];
-  }
-  renderBg();
-  redrawStrokes();
-  renderSidebar();
-  updateStatusBar();
-  scheduleSave();
-}
-
-// ---- Sidebar Render ----
-function renderSidebar() {
-  const nbList = document.getElementById('notebooks-list');
-  nbList.innerHTML = '';
-  state.notebooks.forEach(nb => {
-    const el = document.createElement('div');
-    el.className = 'notebook-item' + (nb.id === state.activeNotebook ? ' active' : '');
-    const cnt = state.pages.filter(p => p.notebookId === nb.id).length;
-    el.innerHTML = `<span class="nb-icon">${nb.icon}</span><span class="nb-name">${nb.name}</span><span class="nb-count">${cnt}</span>`;
-    el.addEventListener('click', () => { state.activeNotebook = nb.id; renderSidebar(); });
-    nbList.appendChild(el);
+// ── Sidebar ──
+function renderSidebar(){
+  const nbEl=document.getElementById('notebooks-list');
+  nbEl.innerHTML='';
+  S.notebooks.forEach(nb=>{
+    const el=document.createElement('div');
+    el.className='nb-item'+(nb.id===S.activeNotebook?' active':'');
+    const cnt=S.pages.filter(p=>p.notebookId===nb.id).length;
+    el.innerHTML=`<span>${nb.icon}</span><span class="nb-name">${nb.name}</span><span class="nb-cnt">${cnt}</span>`;
+    el.onclick=()=>{ S.activeNotebook=nb.id; renderSidebar(); };
+    nbEl.appendChild(el);
   });
-
-  const pl = document.getElementById('pages-list');
-  const search = document.getElementById('search-input').value.toLowerCase();
-  const pages = state.pages.filter(p => p.notebookId === state.activeNotebook && p.title.toLowerCase().includes(search));
-  pl.innerHTML = '';
-  pages.forEach(page => {
-    const el = document.createElement('div');
-    el.className = 'page-item' + (page.id === state.activePage ? ' active' : '');
-    const d = new Date(page.created); const ds = d.toLocaleDateString('en-US', { month:'short', day:'numeric' });
-    const sCount = (state.strokes[page.id] || []).length;
-    el.innerHTML = `<div class="page-preview-thumb"></div><div class="page-info"><div class="page-title">${page.title}</div><div class="page-date">${ds} · ${sCount} stroke${sCount !== 1 ? 's' : ''}</div></div>`;
-    el.addEventListener('click', () => setActivePage(page.id));
-    el.addEventListener('contextmenu', e => { e.preventDefault(); showContextMenu(e, page.id); });
+  const pl=document.getElementById('pages-list');
+  const q=document.getElementById('search-input').value.toLowerCase();
+  pl.innerHTML='';
+  S.pages.filter(p=>p.notebookId===S.activeNotebook&&p.title.toLowerCase().includes(q)).forEach(pg=>{
+    const el=document.createElement('div');
+    el.className='pg-item'+(pg.id===S.activePage?' active':'');
+    const ds=new Date(pg.created).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    const sc=(S.strokes[pg.id]||[]).length;
+    el.innerHTML=`<div class="pg-thumb"></div><div class="pg-info"><div class="pg-title">${pg.title}</div><div class="pg-date">${ds} · ${sc} stroke${sc!==1?'s':''}</div></div>`;
+    el.onclick=()=>setActivePage(pg.id);
+    el.oncontextmenu=e=>{ e.preventDefault(); showCtx(e,pg.id); };
     pl.appendChild(el);
   });
 }
 
-// ---- Canvas Setup ----
-function setupCanvases() {
-  const dpr = window.devicePixelRatio || 1;
-  [bgCanvas, drawCanvas, overlayCanvas].forEach(c => {
-    c.width = PAGE_W * dpr;
-    c.height = PAGE_H * dpr;
-    c.style.width = PAGE_W + 'px';
-    c.style.height = PAGE_H + 'px';
-    c.getContext('2d').scale(dpr, dpr);
+// ── Canvas setup ──
+function setupCanvases(){
+  const dpr=window.devicePixelRatio||1;
+  [bgC,drC,ovC].forEach(c=>{
+    c.width=PAGE_W*dpr; c.height=PAGE_H*dpr;
+    c.style.width=PAGE_W+'px'; c.style.height=PAGE_H+'px';
+    c.getContext('2d').scale(dpr,dpr);
   });
-  pageContainer.style.width = PAGE_W + 'px';
-  pageContainer.style.height = PAGE_H + 'px';
+  pageWrap.style.width=PAGE_W+'px'; pageWrap.style.height=PAGE_H+'px';
 }
 
-// ---- Background Render ----
-function renderBg() {
-  const ctx = bgCtx;
-  const isDark = state.darkMode;
-  const theme = isDark ? 'dark' : 'light';
-  const pt = state.paperType;
-  ctx.clearRect(0, 0, PAGE_W, PAGE_H);
-  ctx.fillStyle = PAPER_COLORS[theme][pt] || '#FFFFFF';
-  ctx.fillRect(0, 0, PAGE_W, PAGE_H);
-
-  if (pt === 'ruled') {
-    const lineH = 28;
-    ctx.strokeStyle = isDark ? 'rgba(100,149,237,0.14)' : 'rgba(100,149,237,0.22)';
-    ctx.lineWidth = 0.7;
-    ctx.beginPath();
-    for (let y = lineH; y < PAGE_H; y += lineH) {
-      ctx.moveTo(20, y); ctx.lineTo(PAGE_W - 20, y);
-    }
+// ── Background ──
+function renderBg(){
+  const ctx=bgX, isDark=S.darkMode, t=isDark?'dark':'light', pt=S.paperType;
+  ctx.clearRect(0,0,PAGE_W,PAGE_H);
+  ctx.fillStyle=PAPER_BG[t][pt]||'#FFF';
+  ctx.fillRect(0,0,PAGE_W,PAGE_H);
+  if(pt==='ruled'){
+    const lh=28;
+    ctx.strokeStyle=isDark?'rgba(100,149,237,0.14)':'rgba(100,149,237,0.22)';
+    ctx.lineWidth=0.7; ctx.beginPath();
+    for(let y=lh;y<PAGE_H;y+=lh){ ctx.moveTo(20,y); ctx.lineTo(PAGE_W-20,y); }
     ctx.stroke();
-    ctx.strokeStyle = isDark ? 'rgba(220,100,100,0.18)' : 'rgba(220,100,100,0.3)';
-    ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(72, 0); ctx.lineTo(72, PAGE_H); ctx.stroke();
-  } else if (pt === 'grid') {
-    const gs = 24;
-    ctx.strokeStyle = isDark ? 'rgba(100,149,237,0.1)' : 'rgba(100,149,237,0.18)';
-    ctx.lineWidth = 0.5;
-    ctx.beginPath();
-    for (let x = 0; x < PAGE_W; x += gs) { ctx.moveTo(x, 0); ctx.lineTo(x, PAGE_H); }
-    for (let y = 0; y < PAGE_H; y += gs) { ctx.moveTo(0, y); ctx.lineTo(PAGE_W, y); }
+    ctx.strokeStyle=isDark?'rgba(220,100,100,0.18)':'rgba(220,100,100,0.3)';
+    ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(72,0); ctx.lineTo(72,PAGE_H); ctx.stroke();
+  } else if(pt==='grid'){
+    const gs=24;
+    ctx.strokeStyle=isDark?'rgba(100,149,237,0.1)':'rgba(100,149,237,0.18)';
+    ctx.lineWidth=0.5; ctx.beginPath();
+    for(let x=0;x<PAGE_W;x+=gs){ ctx.moveTo(x,0); ctx.lineTo(x,PAGE_H); }
+    for(let y=0;y<PAGE_H;y+=gs){ ctx.moveTo(0,y); ctx.lineTo(PAGE_W,y); }
     ctx.stroke();
-  } else if (pt === 'dot') {
-    const gs = 24;
-    ctx.fillStyle = isDark ? 'rgba(100,149,237,0.3)' : 'rgba(100,149,237,0.35)';
-    for (let x = gs; x < PAGE_W; x += gs) {
-      for (let y = gs; y < PAGE_H; y += gs) {
-        ctx.beginPath(); ctx.arc(x, y, 0.9, 0, Math.PI * 2); ctx.fill();
-      }
+  } else if(pt==='dot'){
+    const gs=24;
+    ctx.fillStyle=isDark?'rgba(100,149,237,0.3)':'rgba(100,149,237,0.35)';
+    for(let x=gs;x<PAGE_W;x+=gs) for(let y=gs;y<PAGE_H;y+=gs){
+      ctx.beginPath(); ctx.arc(x,y,0.9,0,Math.PI*2); ctx.fill();
     }
   }
 }
 
-// ---- Zoom & Pan ----
-function updateZoom() {
-  const z = state.zoom;
-  pageContainer.style.transform = `scale(${z})`;
-  pageContainer.style.transformOrigin = 'top center';
-  document.getElementById('status-zoom').textContent = `Zoom: ${Math.round(z * 100)}%`;
+// ── Zoom ──
+function setZoom(z){
+  S.zoom=Math.max(0.2,Math.min(5,z));
+  pageWrap.style.transform=`scale(${S.zoom})`;
+  pageWrap.style.transformOrigin='top center';
+  document.getElementById('zoom-label').textContent=Math.round(S.zoom*100)+'%';
 }
 
-function setZoom(z) {
-  state.zoom = Math.max(0.25, Math.min(4, z));
-  updateZoom();
-}
-
-// ---- Stroke Model ----
-// Stroke: { id, tool, color, size, points: [{x,y,p,t}], opacity }
-
-function catmullRom(pts, tension = 0.5) {
-  if (pts.length < 2) return pts;
-  const result = [];
-  for (let i = 0; i < pts.length - 1; i++) {
-    const p0 = pts[Math.max(0, i - 1)];
-    const p1 = pts[i];
-    const p2 = pts[i + 1];
-    const p3 = pts[Math.min(pts.length - 1, i + 2)];
-    const steps = Math.max(2, Math.ceil(Math.hypot(p2.x - p1.x, p2.y - p1.y) / 2));
-    for (let t = 0; t < steps; t++) {
-      const s = t / steps;
-      const s2 = s * s, s3 = s2 * s;
-      const h1 = -tension * s3 + 2 * tension * s2 - tension * s;
-      const h2 = (2 - tension) * s3 + (tension - 3) * s2 + 1;
-      const h3 = (tension - 2) * s3 + (3 - 2 * tension) * s2 + tension * s;
-      const h4 = tension * s3 - tension * s2;
-      result.push({
-        x: h1 * p0.x + h2 * p1.x + h3 * p2.x + h4 * p3.x,
-        y: h1 * p0.y + h2 * p1.y + h3 * p2.y + h4 * p3.y,
-        p: p1.p + (p2.p - p1.p) * s
-      });
+// ── Catmull-Rom smoothing ──
+function catmullRom(pts,t=0.5){
+  if(pts.length<3) return pts;
+  const out=[];
+  for(let i=0;i<pts.length-1;i++){
+    const p0=pts[Math.max(0,i-1)], p1=pts[i], p2=pts[i+1], p3=pts[Math.min(pts.length-1,i+2)];
+    const steps=Math.max(2,Math.ceil(Math.hypot(p2.x-p1.x,p2.y-p1.y)/2));
+    for(let j=0;j<steps;j++){
+      const s=j/steps,s2=s*s,s3=s2*s;
+      const h1=-t*s3+2*t*s2-t*s, h2=(2-t)*s3+(t-3)*s2+1;
+      const h3=(t-2)*s3+(3-2*t)*s2+t*s, h4=t*s3-t*s2;
+      out.push({x:h1*p0.x+h2*p1.x+h3*p2.x+h4*p3.x, y:h1*p0.y+h2*p1.y+h3*p2.y+h4*p3.y, p:p1.p+(p2.p-p1.p)*s});
     }
   }
-  result.push(pts[pts.length - 1]);
-  return result;
+  out.push(pts[pts.length-1]); return out;
 }
 
-function renderStroke(ctx, stroke, partial = false) {
-  let pts = stroke.points;
-  if (!pts || pts.length < 2) return;
-  const useSmooth = state.settings.smooth && !partial;
-  if (useSmooth && pts.length >= 3) pts = catmullRom(pts);
-
-  ctx.save();
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
-
-  if (stroke.tool === 'highlighter') {
-    ctx.globalCompositeOperation = 'multiply';
-    ctx.globalAlpha = 0.4;
-    ctx.strokeStyle = stroke.color;
-    ctx.lineWidth = stroke.size * 4;
-    ctx.beginPath();
-    ctx.moveTo(pts[0].x, pts[0].y);
-    for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+// ── Stroke render ──
+function renderStroke(ctx,stroke,partial=false){
+  let pts=stroke.points; if(!pts||pts.length<2) return;
+  if(S.settings.smooth&&!partial&&pts.length>=3) pts=catmullRom(pts);
+  ctx.save(); ctx.lineCap='round'; ctx.lineJoin='round';
+  if(stroke.tool==='highlighter'){
+    ctx.globalCompositeOperation='multiply'; ctx.globalAlpha=0.38;
+    ctx.strokeStyle=stroke.color; ctx.lineWidth=stroke.size*4;
+    ctx.beginPath(); ctx.moveTo(pts[0].x,pts[0].y);
+    for(let i=1;i<pts.length;i++) ctx.lineTo(pts[i].x,pts[i].y);
     ctx.stroke();
-  } else if (stroke.tool === 'fountain') {
-    // Variable width based on pressure
-    ctx.globalAlpha = 1;
-    ctx.strokeStyle = stroke.color;
-    for (let i = 1; i < pts.length; i++) {
-      const p = pts[i], pp = pts[i - 1];
-      const avgP = ((p.p || 0.5) + (pp.p || 0.5)) / 2;
-      const vel = Math.hypot(p.x - pp.x, p.y - pp.y);
-      const velFactor = Math.max(0.3, 1 - vel * 0.012);
-      const w = Math.max(0.4, stroke.size * avgP * 1.8 * velFactor);
-      ctx.beginPath(); ctx.lineWidth = w;
-      ctx.moveTo(pp.x, pp.y); ctx.lineTo(p.x, p.y); ctx.stroke();
+  } else if(stroke.tool==='fountain'){
+    ctx.globalAlpha=1;
+    for(let i=1;i<pts.length;i++){
+      const p=pts[i],pp=pts[i-1];
+      const avgP=((p.p||0.5)+(pp.p||0.5))/2;
+      const vel=Math.hypot(p.x-pp.x,p.y-pp.y);
+      const vf=Math.max(0.3,1-vel*0.012);
+      ctx.strokeStyle=stroke.color; ctx.lineWidth=Math.max(0.4,stroke.size*avgP*1.8*vf);
+      ctx.beginPath(); ctx.moveTo(pp.x,pp.y); ctx.lineTo(p.x,p.y); ctx.stroke();
     }
-  } else if (stroke.tool === 'pencil') {
-    ctx.globalAlpha = 0.75;
-    ctx.strokeStyle = stroke.color;
-    for (let i = 1; i < pts.length; i++) {
-      const p = pts[i], pp = pts[i - 1];
-      const pres = (p.p || 0.5);
-      const w = Math.max(0.3, stroke.size * pres * 1.2);
-      ctx.globalAlpha = 0.45 + pres * 0.5;
-      ctx.lineWidth = w;
-      ctx.beginPath(); ctx.moveTo(pp.x, pp.y); ctx.lineTo(p.x, p.y); ctx.stroke();
+  } else if(stroke.tool==='pencil'){
+    for(let i=1;i<pts.length;i++){
+      const p=pts[i],pp=pts[i-1],pr=p.p||0.5;
+      ctx.globalAlpha=0.45+pr*0.5; ctx.strokeStyle=stroke.color;
+      ctx.lineWidth=Math.max(0.3,stroke.size*pr*1.2);
+      ctx.beginPath(); ctx.moveTo(pp.x,pp.y); ctx.lineTo(p.x,p.y); ctx.stroke();
     }
   } else {
-    // Ballpoint
-    ctx.globalAlpha = 1;
-    ctx.strokeStyle = stroke.color;
-    ctx.lineWidth = stroke.size;
-    ctx.beginPath(); ctx.moveTo(pts[0].x, pts[0].y);
-    for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+    ctx.globalAlpha=1; ctx.strokeStyle=stroke.color; ctx.lineWidth=stroke.size;
+    ctx.beginPath(); ctx.moveTo(pts[0].x,pts[0].y);
+    for(let i=1;i<pts.length;i++) ctx.lineTo(pts[i].x,pts[i].y);
     ctx.stroke();
   }
   ctx.restore();
 }
 
-function redrawStrokes(layerCtx) {
-  const ctx = layerCtx || drawCtx;
-  ctx.clearRect(0, 0, PAGE_W, PAGE_H);
-  const strokes = state.strokes[state.activePage] || [];
-  strokes.forEach(s => renderStroke(ctx, s));
-  document.getElementById('status-strokes').textContent = `Strokes: ${strokes.length}`;
+function redrawStrokes(){
+  drX.clearRect(0,0,PAGE_W,PAGE_H);
+  (S.strokes[S.activePage]||[]).forEach(s=>renderStroke(drX,s));
+  updateStatus();
 }
 
-// ---- Hit test for stroke eraser ----
-function pointNearStroke(stroke, tx, ty, radius = 8) {
-  const pts = stroke.points;
-  for (let i = 0; i < pts.length; i++) {
-    if (Math.hypot(pts[i].x - tx, pts[i].y - ty) < radius) return true;
-  }
-  return false;
+// ── Coordinate helper ──
+function canvasXY(e){
+  const r=drC.getBoundingClientRect();
+  return { x:(e.clientX-r.left)/S.zoom, y:(e.clientY-r.top)/S.zoom };
 }
 
-// ---- Coordinate conversion ----
-function canvasXY(e) {
-  const rect = drawCanvas.getBoundingClientRect();
-  const z = state.zoom;
-  const x = (e.clientX - rect.left) / z;
-  const y = (e.clientY - rect.top) / z;
-  return { x, y };
-}
+// ── Erase ──
+function hitTest(stroke,x,y,r=10){ return stroke.points.some(p=>Math.hypot(p.x-x,p.y-y)<r); }
 
-// ---- Pointer Events ----
-let activePointerId = null;
-let touchStartPositions = {};
-let pinchStartDist = 0;
-let pinchStartZoom = 1;
-
-function shouldIgnoreTouch(e) {
-  if (e.pointerType === 'pen') return false;
-  if (state.settings.stylusOnly) return true;
-  if (state.settings.palmReject && state.penActive && Date.now() - state.penActiveTime < 500) return true;
-  return false;
-}
-
-drawCanvas.addEventListener('pointerdown', onPointerDown);
-drawCanvas.addEventListener('pointermove', onPointerMove);
-drawCanvas.addEventListener('pointerup', onPointerUp);
-drawCanvas.addEventListener('pointercancel', onPointerUp);
-drawCanvas.addEventListener('contextmenu', e => e.preventDefault());
-
-function onPointerDown(e) {
-  e.preventDefault();
-  if (e.pointerType === 'pen') {
-    state.penActive = true;
-    state.penActiveTime = Date.now();
-  }
-
-  // Handle two-touch pinch start
-  if (e.pointerType === 'touch') {
-    touchStartPositions[e.pointerId] = { x: e.clientX, y: e.clientY };
-    const tids = Object.keys(touchStartPositions);
-    if (tids.length === 2) {
-      const a = touchStartPositions[tids[0]], b = touchStartPositions[tids[1]];
-      pinchStartDist = Math.hypot(b.x - a.x, b.y - a.y);
-      pinchStartZoom = state.zoom;
-      state.pinch.active = true;
-      return;
-    }
-    if (shouldIgnoreTouch(e)) return;
-  }
-
-  if (state.tool === 'lasso') { startLasso(e); return; }
-
-  if (state.isDrawing) return;
-  if (e.buttons !== 1 && e.pointerType !== 'touch') return;
-  activePointerId = e.pointerId;
-  drawCanvas.setPointerCapture(e.pointerId);
-
-  const { x, y } = canvasXY(e);
-  const pres = e.pressure > 0 ? e.pressure : 0.5;
-
-  if (state.tool === 'eraser-pixel' || state.tool === 'eraser-stroke') {
-    state.isDrawing = true;
-    handleErase(x, y);
-    return;
-  }
-
-  state.isDrawing = true;
-  state.currentStroke = {
-    id: genId(),
-    tool: state.tool,
-    color: state.color,
-    size: state.size,
-    points: [{ x, y, p: pres, t: Date.now() }]
-  };
-
-  showPressure(pres);
-}
-
-function onPointerMove(e) {
-  e.preventDefault();
-
-  if (e.pointerType === 'pen') { state.penActive = true; state.penActiveTime = Date.now(); }
-
-  // Pinch zoom
-  if (e.pointerType === 'touch') {
-    touchStartPositions[e.pointerId] = { x: e.clientX, y: e.clientY };
-    const tids = Object.keys(touchStartPositions);
-    if (state.pinch.active && tids.length === 2) {
-      const a = touchStartPositions[tids[0]], b = touchStartPositions[tids[1]];
-      const dist = Math.hypot(b.x - a.x, b.y - a.y);
-      setZoom(pinchStartZoom * (dist / pinchStartDist));
-      return;
-    }
-    if (shouldIgnoreTouch(e)) return;
-  }
-
-  const { x, y } = canvasXY(e);
-  document.getElementById('status-coords').textContent = `x: ${Math.round(x)}, y: ${Math.round(y)}`;
-
-  if (!state.isDrawing || activePointerId !== e.pointerId) return;
-
-  if (state.tool === 'eraser-pixel' || state.tool === 'eraser-stroke') { handleErase(x, y); return; }
-  if (state.tool === 'lasso') { moveLasso(e); return; }
-
-  const pres = e.pressure > 0 ? e.pressure : 0.5;
-  state.currentStroke.points.push({ x, y, p: pres, t: Date.now() });
-  showPressure(pres);
-
-  // Live preview
-  overlayCtx.clearRect(0, 0, PAGE_W, PAGE_H);
-  if (state.currentStroke.points.length >= 2) renderStroke(overlayCtx, state.currentStroke, true);
-}
-
-function onPointerUp(e) {
-  e.preventDefault();
-
-  if (e.pointerType === 'touch') {
-    delete touchStartPositions[e.pointerId];
-    if (Object.keys(touchStartPositions).length < 2) state.pinch.active = false;
-    if (shouldIgnoreTouch(e)) return;
-  }
-
-  if (e.pointerType === 'pen') {
-    state.penActive = false;
-  }
-
-  if (!state.isDrawing || activePointerId !== e.pointerId) return;
-  state.isDrawing = false;
-  activePointerId = null;
-  overlayCtx.clearRect(0, 0, PAGE_W, PAGE_H);
-  hidePressure();
-
-  if (state.tool === 'lasso') { endLasso(e); return; }
-  if (state.tool === 'eraser-pixel' || state.tool === 'eraser-stroke') return;
-
-  if (state.currentStroke && state.currentStroke.points.length >= 1) {
-    if (state.currentStroke.points.length === 1) {
-      // Dot
-      const pt = state.currentStroke.points[0];
-      state.currentStroke.points.push({ x: pt.x + 0.1, y: pt.y + 0.1, p: pt.p, t: pt.t });
-    }
-    const strokes = state.strokes[state.activePage] || [];
-    strokes.push(state.currentStroke);
-    state.strokes[state.activePage] = strokes;
-    state.redoStack[state.activePage] = [];
-    renderStroke(drawCtx, state.currentStroke);
-    state.currentStroke = null;
-    updateStatusBar();
-    scheduleSave();
-  }
-}
-
-// ---- Erase ----
-function handleErase(x, y) {
-  const strokes = state.strokes[state.activePage] || [];
-  const before = strokes.length;
-  if (state.tool === 'eraser-stroke') {
-    state.strokes[state.activePage] = strokes.filter(s => !pointNearStroke(s, x, y, state.size * 3 + 6));
+function handleErase(x,y){
+  if(S.tool==='eraser-stroke'){
+    const before=(S.strokes[S.activePage]||[]).length;
+    S.strokes[S.activePage]=(S.strokes[S.activePage]||[]).filter(s=>!hitTest(s,x,y,S.size*3+6));
+    if((S.strokes[S.activePage]||[]).length!==before){ redrawStrokes(); scheduleSave(); }
   } else {
-    // Pixel erase via compositing
-    drawCtx.save();
-    drawCtx.globalCompositeOperation = 'destination-out';
-    const r = state.size * 3 + 4;
-    drawCtx.beginPath(); drawCtx.arc(x, y, r, 0, Math.PI * 2);
-    drawCtx.fill();
-    drawCtx.restore();
+    drX.save(); drX.globalCompositeOperation='destination-out';
+    const r=S.size*3+4; drX.beginPath(); drX.arc(x,y,r,0,Math.PI*2); drX.fill(); drX.restore();
   }
-  if (strokes.length !== before) { redrawStrokes(); scheduleSave(); }
 }
 
-// ---- Lasso ----
-let lassoPath = [];
-function startLasso(e) {
-  const { x, y } = canvasXY(e);
-  lassoPath = [{ x, y }];
-  state.isDrawing = true;
-  activePointerId = e.pointerId;
-  drawCanvas.setPointerCapture(e.pointerId);
-}
-function moveLasso(e) {
-  if (!state.isDrawing) return;
-  const { x, y } = canvasXY(e);
-  lassoPath.push({ x, y });
-  overlayCtx.clearRect(0, 0, PAGE_W, PAGE_H);
-  overlayCtx.save();
-  overlayCtx.setLineDash([4, 3]);
-  overlayCtx.strokeStyle = '#3B82F6';
-  overlayCtx.lineWidth = 1.5;
-  overlayCtx.beginPath();
-  lassoPath.forEach((p, i) => i === 0 ? overlayCtx.moveTo(p.x, p.y) : overlayCtx.lineTo(p.x, p.y));
-  overlayCtx.stroke();
-  overlayCtx.restore();
-}
-function endLasso(e) {
-  state.isDrawing = false;
-  overlayCtx.clearRect(0, 0, PAGE_W, PAGE_H);
-  if (lassoPath.length < 4) { lassoPath = []; return; }
-  const selected = (state.strokes[state.activePage] || []).filter(s =>
-    s.points.some(p => pointInPolygon(p.x, p.y, lassoPath))
-  );
-  if (selected.length) {
-    showToast(`${selected.length} stroke${selected.length > 1 ? 's' : ''} selected. Right-click to delete.`);
-    // Mark selected
-    selected.forEach(s => s._selected = true);
-    highlightSelected();
-  }
-  lassoPath = [];
-}
-function pointInPolygon(px, py, poly) {
-  let inside = false;
-  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
-    const xi = poly[i].x, yi = poly[i].y, xj = poly[j].x, yj = poly[j].y;
-    const intersect = ((yi > py) !== (yj > py)) && (px < (xj - xi) * (py - yi) / (yj - yi) + xi);
-    if (intersect) inside = !inside;
+// ── Lasso ──
+let lassoPath=[];
+function ptInPoly(px,py,poly){
+  let inside=false;
+  for(let i=0,j=poly.length-1;i<poly.length;j=i++){
+    const xi=poly[i].x,yi=poly[i].y,xj=poly[j].x,yj=poly[j].y;
+    if((yi>py)!==(yj>py)&&px<(xj-xi)*(py-yi)/(yj-yi)+xi) inside=!inside;
   }
   return inside;
 }
-function highlightSelected() {
-  overlayCtx.clearRect(0, 0, PAGE_W, PAGE_H);
-  (state.strokes[state.activePage] || []).forEach(s => {
-    if (s._selected) {
-      overlayCtx.save();
-      overlayCtx.globalAlpha = 0.4;
-      overlayCtx.strokeStyle = '#3B82F6';
-      overlayCtx.lineWidth = (s.size || 2) + 4;
-      overlayCtx.lineCap = 'round';
-      overlayCtx.beginPath();
-      s.points.forEach((p, i) => i === 0 ? overlayCtx.moveTo(p.x, p.y) : overlayCtx.lineTo(p.x, p.y));
-      overlayCtx.stroke();
-      overlayCtx.restore();
-    }
+function clearSelection(){
+  (S.strokes[S.activePage]||[]).forEach(s=>delete s._sel);
+  ovX.clearRect(0,0,PAGE_W,PAGE_H);
+}
+function highlightSel(){
+  ovX.clearRect(0,0,PAGE_W,PAGE_H);
+  (S.strokes[S.activePage]||[]).forEach(s=>{
+    if(!s._sel) return;
+    ovX.save(); ovX.globalAlpha=0.35; ovX.strokeStyle='#3B82F6';
+    ovX.lineWidth=(s.size||2)+4; ovX.lineCap='round';
+    ovX.beginPath(); s.points.forEach((p,i)=>i===0?ovX.moveTo(p.x,p.y):ovX.lineTo(p.x,p.y)); ovX.stroke(); ovX.restore();
   });
 }
+function deleteSelected(){
+  const before=(S.strokes[S.activePage]||[]).length;
+  S.strokes[S.activePage]=(S.strokes[S.activePage]||[]).filter(s=>!s._sel);
+  if((S.strokes[S.activePage]||[]).length!==before){ redrawStrokes(); scheduleSave(); showToast('Deleted selected strokes'); }
+  clearSelection(); lassoPath=[];
+}
 
-// ---- Undo / Redo ----
-function undo() {
-  const id = state.activePage;
-  const strokes = state.strokes[id] || [];
-  if (!strokes.length) return;
-  const popped = strokes.pop();
-  if (!state.redoStack[id]) state.redoStack[id] = [];
-  state.redoStack[id].push(popped);
+// ── Pointer events ──
+let activePID=null;
+drC.addEventListener('pointerdown', onPD);
+drC.addEventListener('pointermove', onPM);
+drC.addEventListener('pointerup',   onPU);
+drC.addEventListener('pointercancel',onPU);
+drC.addEventListener('contextmenu', e=>{ e.preventDefault(); showCtx(e,null); });
+
+function ignoreTouchDraw(e){
+  if(e.pointerType==='pen') return false;
+  if(S.settings.stylusOnly) return true;
+  if(S.settings.palmReject&&S.penActive&&Date.now()-S.penActiveTime<600) return true;
+  return false;
+}
+
+function onPD(e){
+  e.preventDefault();
+  if(e.pointerType==='pen'){ S.penActive=true; S.penActiveTime=Date.now(); }
+
+  // Pinch start
+  if(e.pointerType==='touch'){
+    S.touchPositions[e.pointerId]={x:e.clientX,y:e.clientY};
+    const ids=Object.keys(S.touchPositions);
+    if(ids.length===2){
+      const a=S.touchPositions[ids[0]],b=S.touchPositions[ids[1]];
+      S.pinchDist=Math.hypot(b.x-a.x,b.y-a.y); S.pinchZoom=S.zoom; S.pinchActive=true; return;
+    }
+    if(ignoreTouchDraw(e)) return;
+  }
+
+  if(S.isDrawing||activePID!==null) return;
+  activePID=e.pointerId;
+  drC.setPointerCapture(e.pointerId);
+
+  const {x,y}=canvasXY(e);
+  const pres=e.pressure>0?e.pressure:0.5;
+
+  if(S.tool==='lasso'){ lassoPath=[{x,y}]; S.isDrawing=true; return; }
+  if(S.tool.startsWith('eraser')){ S.isDrawing=true; handleErase(x,y); return; }
+
   clearSelection();
-  redrawStrokes(); scheduleSave();
-}
-function redo() {
-  const id = state.activePage;
-  const rs = state.redoStack[id] || [];
-  if (!rs.length) return;
-  const s = rs.pop();
-  state.strokes[id].push(s);
-  clearSelection();
-  redrawStrokes(); scheduleSave();
-}
-function clearSelection() {
-  (state.strokes[state.activePage] || []).forEach(s => delete s._selected);
-  overlayCtx.clearRect(0, 0, PAGE_W, PAGE_H);
+  S.isDrawing=true;
+  S.currentStroke={id:genId(),tool:S.tool,color:S.color,size:S.size,points:[{x,y,p:pres,t:Date.now()}]};
+  showPressure(pres);
 }
 
-// ---- Status / Pressure ----
-let pressureTimer;
-function showPressure(p) {
-  const el = document.getElementById('pressure-indicator');
-  el.textContent = `Pressure: ${Math.round(p * 100)}%`;
-  el.classList.add('visible');
-  clearTimeout(pressureTimer);
-  pressureTimer = setTimeout(() => el.classList.remove('visible'), 1500);
-}
-function hidePressure() {
-  clearTimeout(pressureTimer);
-  document.getElementById('pressure-indicator').classList.remove('visible');
+function onPM(e){
+  e.preventDefault();
+  if(e.pointerType==='pen'){ S.penActive=true; S.penActiveTime=Date.now(); }
+
+  // Pinch move
+  if(e.pointerType==='touch'){
+    S.touchPositions[e.pointerId]={x:e.clientX,y:e.clientY};
+    const ids=Object.keys(S.touchPositions);
+    if(S.pinchActive&&ids.length===2){
+      const a=S.touchPositions[ids[0]],b=S.touchPositions[ids[1]];
+      const d=Math.hypot(b.x-a.x,b.y-a.y);
+      setZoom(S.pinchZoom*(d/S.pinchDist)); return;
+    }
+    if(ignoreTouchDraw(e)) return;
+  }
+
+  const {x,y}=canvasXY(e);
+  document.getElementById('st-coords').textContent=`x:${Math.round(x)} y:${Math.round(y)}`;
+
+  if(!S.isDrawing||activePID!==e.pointerId) return;
+
+  if(S.tool==='lasso'){
+    lassoPath.push({x,y});
+    ovX.clearRect(0,0,PAGE_W,PAGE_H);
+    ovX.save(); ovX.setLineDash([4,3]); ovX.strokeStyle='#3B82F6'; ovX.lineWidth=1.5;
+    ovX.beginPath(); lassoPath.forEach((p,i)=>i===0?ovX.moveTo(p.x,p.y):ovX.lineTo(p.x,p.y));
+    ovX.stroke(); ovX.restore(); return;
+  }
+  if(S.tool.startsWith('eraser')){ handleErase(x,y); return; }
+
+  const pres=e.pressure>0?e.pressure:0.5;
+  S.currentStroke.points.push({x,y,p:pres,t:Date.now()});
+  showPressure(pres);
+
+  // Live preview
+  ovX.clearRect(0,0,PAGE_W,PAGE_H);
+  if(S.currentStroke.points.length>=2) renderStroke(ovX,S.currentStroke,true);
 }
 
-function updateStatusBar() {
-  const toolNames = { fountain: '🖊 Fountain Pen', ballpoint: '🖋 Ballpoint', highlighter: '✏️ Highlighter', pencil: '✎ Pencil', 'eraser-pixel': '◻ Pixel Eraser', 'eraser-stroke': '⌫ Stroke Eraser', lasso: '⌾ Lasso' };
-  document.getElementById('status-tool').textContent = toolNames[state.tool] || state.tool;
-  const cnt = (state.strokes[state.activePage] || []).length;
-  document.getElementById('status-strokes').textContent = `Strokes: ${cnt}`;
-  document.getElementById('palm-reject-badge').classList.toggle('active', state.settings.palmReject);
+function onPU(e){
+  e.preventDefault();
+  if(e.pointerType==='touch'){
+    delete S.touchPositions[e.pointerId];
+    if(Object.keys(S.touchPositions).length<2) S.pinchActive=false;
+    if(ignoreTouchDraw(e)) return;
+  }
+  if(e.pointerType==='pen') S.penActive=false;
+  if(!S.isDrawing||activePID!==e.pointerId) return;
+  S.isDrawing=false; activePID=null;
+  ovX.clearRect(0,0,PAGE_W,PAGE_H); hidePressure();
+
+  // Lasso end
+  if(S.tool==='lasso'){
+    if(lassoPath.length>=4){
+      const sel=(S.strokes[S.activePage]||[]).filter(s=>s.points.some(p=>ptInPoly(p.x,p.y,lassoPath)));
+      sel.forEach(s=>s._sel=true);
+      if(sel.length){ highlightSel(); showToast(`${sel.length} stroke${sel.length>1?'s':''} selected`); }
+    }
+    lassoPath=[]; return;
+  }
+  if(S.tool.startsWith('eraser')) return;
+
+  if(S.currentStroke&&S.currentStroke.points.length>=1){
+    const pt=S.currentStroke.points[0];
+    if(S.currentStroke.points.length===1) S.currentStroke.points.push({x:pt.x+0.2,y:pt.y+0.2,p:pt.p,t:pt.t});
+    const strokes=S.strokes[S.activePage]||[];
+    strokes.push(S.currentStroke);
+    S.strokes[S.activePage]=strokes;
+    S.redoStack[S.activePage]=[];
+    renderStroke(drX,S.currentStroke);
+    S.currentStroke=null;
+    updateStatus(); scheduleSave();
+  }
 }
 
-// ---- Tool / Color Buttons ----
-document.querySelectorAll('[data-tool]').forEach(btn => {
-  btn.addEventListener('click', () => {
+// ── Undo / Redo ──
+function undo(){
+  const id=S.activePage, arr=S.strokes[id]||[];
+  if(!arr.length) return;
+  const s=arr.pop();
+  if(!S.redoStack[id]) S.redoStack[id]=[];
+  S.redoStack[id].push(s);
+  clearSelection(); redrawStrokes(); scheduleSave(); showToast('Undone');
+}
+function redo(){
+  const id=S.activePage, rs=S.redoStack[id]||[];
+  if(!rs.length) return;
+  const s=rs.pop();
+  S.strokes[id].push(s);
+  clearSelection(); redrawStrokes(); scheduleSave(); showToast('Redone');
+}
+function clearPage(){
+  if(!confirm('Clear all strokes on this page?')) return;
+  S.strokes[S.activePage]=[]; S.redoStack[S.activePage]=[];
+  clearSelection(); redrawStrokes(); scheduleSave(); showToast('Page cleared');
+}
+
+// ── Status & Pressure ──
+const TOOL_NAMES={fountain:'🖊 Fountain Pen',ballpoint:'🖋 Ballpoint',highlighter:'✏️ Highlighter',
+  pencil:'✎ Pencil','eraser-pixel':'◻ Pixel Eraser','eraser-stroke':'⌫ Stroke Eraser',lasso:'⌾ Lasso'};
+function updateStatus(){
+  document.getElementById('st-tool').textContent=TOOL_NAMES[S.tool]||S.tool;
+  const cnt=(S.strokes[S.activePage]||[]).length;
+  document.getElementById('st-strokes').textContent=`Strokes: ${cnt}`;
+  document.getElementById('palm-badge').textContent=S.settings.palmReject?'Palm Rejection ON':'';
+}
+let phTimer;
+function showPressure(p){
+  const el=document.getElementById('pressure-hint');
+  el.textContent=`Pressure: ${Math.round(p*100)}%`; el.classList.add('on');
+  clearTimeout(phTimer); phTimer=setTimeout(()=>el.classList.remove('on'),1400);
+}
+function hidePressure(){ clearTimeout(phTimer); document.getElementById('pressure-hint').classList.remove('on'); }
+
+// ── Toast ──
+let toastTimer;
+function showToast(msg){
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'),2400);
+}
+
+// ── Context menu ──
+let ctxPageId=null;
+function showCtx(e,pid){
+  ctxPageId=pid;
+  const c=document.getElementById('ctx');
+  c.style.display='block';
+  const x=Math.min(e.clientX,window.innerWidth-170);
+  const y=Math.min(e.clientY,window.innerHeight-180);
+  c.style.left=x+'px'; c.style.top=y+'px';
+}
+document.addEventListener('click',()=>document.getElementById('ctx').style.display='none');
+document.getElementById('ctx-undo').onclick=undo;
+document.getElementById('ctx-redo').onclick=redo;
+document.getElementById('ctx-select-del').onclick=deleteSelected;
+document.getElementById('ctx-clear').onclick=clearPage;
+document.getElementById('ctx-del-page').onclick=()=>{ if(confirm('Delete this page?')) deletePage(ctxPageId||S.activePage); };
+
+// ── Tool buttons ──
+document.querySelectorAll('[data-tool]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
     clearSelection();
-    state.tool = btn.dataset.tool;
-    document.querySelectorAll('[data-tool]').forEach(b => b.classList.remove('active'));
+    S.tool=btn.dataset.tool;
+    document.querySelectorAll('[data-tool]').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
-    updateStatusBar();
-    const cursorMap = { fountain: 'crosshair', ballpoint: 'crosshair', highlighter: 'crosshair', pencil: 'crosshair', 'eraser-pixel': 'cell', 'eraser-stroke': 'not-allowed', lasso: 'default' };
-    drawCanvas.style.cursor = cursorMap[state.tool] || 'crosshair';
+    const cur={fountain:'crosshair',ballpoint:'crosshair',highlighter:'crosshair',pencil:'crosshair',
+      'eraser-pixel':'cell','eraser-stroke':'not-allowed',lasso:'default'};
+    drC.style.cursor=cur[S.tool]||'crosshair';
+    updateStatus();
   });
 });
 
-document.querySelectorAll('.color-swatch:not(#custom-color-btn)').forEach(sw => {
-  sw.addEventListener('click', () => {
-    state.color = sw.dataset.color;
-    document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+// ── Color swatches ──
+document.querySelectorAll('.csw:not(#custom-color-btn)').forEach(sw=>{
+  sw.addEventListener('click',()=>{
+    S.color=sw.dataset.color;
+    document.querySelectorAll('.csw').forEach(s=>s.classList.remove('active'));
     sw.classList.add('active');
   });
 });
 
-const strokeSizeInput = document.getElementById('stroke-size');
-strokeSizeInput.addEventListener('input', () => {
-  state.size = parseFloat(strokeSizeInput.value);
-  document.getElementById('stroke-size-label').textContent = state.size;
+// ── Color popup ──
+const colorPopup=document.getElementById('color-popup');
+const PRESET=['#1A1A18','#1D4ED8','#DC2626','#16A34A','#9333EA','#EA580C',
+  '#F59E0B','#EC4899','#0891B2','#4B5563','#7C3AED','#059669',
+  '#B45309','#DB2777','#0369A1','#065F46','#7F1D1D','#1E3A5F','#374151','#6EE7B7'];
+const cpGrid=document.getElementById('cp-grid');
+PRESET.forEach(c=>{
+  const el=document.createElement('div'); el.className='cp-sw'; el.style.background=c;
+  el.onclick=()=>{ S.color=c; document.querySelectorAll('.csw').forEach(s=>s.classList.remove('active')); colorPopup.classList.remove('open'); showToast('Color set'); };
+  cpGrid.appendChild(el);
 });
-
-// ---- Color Popup ----
-const colorPopup = document.getElementById('color-popup');
-const PRESET_COLORS = ['#1A1A18','#1D4ED8','#DC2626','#16A34A','#9333EA','#EA580C','#F59E0B','#EC4899','#0891B2','#4B5563','#7C3AED','#059669','#B45309','#DB2777','#0369A1','#065F46','#7F1D1D','#1E3A5F','#374151','#F9FAFB'];
-const colorGrid = document.getElementById('color-grid');
-PRESET_COLORS.forEach(c => {
-  const el = document.createElement('div');
-  el.className = 'cp-swatch';
-  el.style.background = c;
-  el.addEventListener('click', () => { state.color = c; document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active')); colorPopup.style.display = 'none'; });
-  colorGrid.appendChild(el);
-});
-document.getElementById('custom-color-btn').addEventListener('click', (e) => {
+document.getElementById('custom-color-btn').addEventListener('click',e=>{
   e.stopPropagation();
+  const r=e.target.getBoundingClientRect();
+  colorPopup.style.top=(r.bottom+6)+'px';
+  colorPopup.style.left=Math.min(r.left-60,window.innerWidth-160)+'px';
   colorPopup.classList.toggle('open');
-  const rect = e.target.getBoundingClientRect();
-  colorPopup.style.top = (rect.bottom + 6) + 'px';
-  colorPopup.style.left = (rect.left - 80) + 'px';
-  colorPopup.style.position = 'fixed';
 });
-document.getElementById('hex-color-input').addEventListener('input', e => { state.color = e.target.value; });
-document.addEventListener('click', (e) => { if (!colorPopup.contains(e.target) && e.target.id !== 'custom-color-btn') colorPopup.classList.remove('open'); });
+document.getElementById('hex-input').addEventListener('input',e=>{ S.color=e.target.value; });
+document.addEventListener('click',e=>{ if(!colorPopup.contains(e.target)&&e.target.id!=='custom-color-btn') colorPopup.classList.remove('open'); });
 
-// ---- Paper Type ----
-document.querySelectorAll('.paper-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    state.paperType = btn.dataset.paper;
-    document.querySelectorAll('.paper-btn').forEach(b => b.classList.remove('active'));
+// ── Size slider ──
+document.getElementById('stroke-size').addEventListener('input',e=>{
+  S.size=parseFloat(e.target.value);
+  document.getElementById('sz-label').textContent=S.size;
+});
+
+// ── Paper type ──
+document.querySelectorAll('.pp-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    S.paperType=btn.dataset.paper;
+    document.querySelectorAll('.pp-btn').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
-    const page = state.pages.find(p => p.id === state.activePage);
-    if (page) page.paperType = state.paperType;
+    const pg=S.pages.find(p=>p.id===S.activePage);
+    if(pg) pg.paperType=S.paperType;
     renderBg(); scheduleSave();
   });
 });
 
-// ---- Undo / Redo buttons ----
-document.getElementById('undo-btn').addEventListener('click', undo);
-document.getElementById('redo-btn').addEventListener('click', redo);
-document.addEventListener('keydown', e => {
-  if ((e.metaKey || e.ctrlKey) && e.key === 'z') { e.preventDefault(); if (e.shiftKey) redo(); else undo(); }
-  if ((e.metaKey || e.ctrlKey) && e.key === 'y') { e.preventDefault(); redo(); }
-  if (e.key === 'Escape') clearSelection();
-});
+// ── Undo / Redo / Clear buttons ──
+document.getElementById('undo-btn').addEventListener('click',undo);
+document.getElementById('redo-btn').addEventListener('click',redo);
+document.getElementById('clear-btn').addEventListener('click',clearPage);
 
-// ---- Zoom ----
-document.getElementById('zoom-fit-btn').addEventListener('click', () => setZoom(1));
-canvasScroll.addEventListener('wheel', e => {
-  if (e.ctrlKey || e.metaKey) {
-    e.preventDefault();
-    const delta = -e.deltaY * 0.001;
-    setZoom(state.zoom * (1 + delta));
+// ── Keyboard shortcuts ──
+document.addEventListener('keydown',e=>{
+  if((e.metaKey||e.ctrlKey)&&e.key==='z'){ e.preventDefault(); if(e.shiftKey) redo(); else undo(); }
+  if((e.metaKey||e.ctrlKey)&&e.key==='y'){ e.preventDefault(); redo(); }
+  if(e.key==='Escape') clearSelection();
+  if(e.key==='Delete'||e.key==='Backspace'){
+    const hasSel=(S.strokes[S.activePage]||[]).some(s=>s._sel);
+    if(hasSel){ e.preventDefault(); deleteSelected(); }
   }
-}, { passive: false });
-
-// ---- Sidebar ----
-document.getElementById('sidebar-toggle').addEventListener('click', () => {
-  document.getElementById('sidebar').classList.toggle('collapsed');
-});
-document.getElementById('new-page-btn').addEventListener('click', () => createPage('Untitled Page'));
-document.getElementById('search-input').addEventListener('input', renderSidebar);
-
-// ---- Page title ----
-document.getElementById('page-title-input').addEventListener('input', e => {
-  const page = state.pages.find(p => p.id === state.activePage);
-  if (page) { page.title = e.target.value || 'Untitled Page'; renderSidebar(); scheduleSave(); }
 });
 
-// ---- Dark mode ----
-document.getElementById('dark-mode-btn').addEventListener('click', () => {
-  state.darkMode = !state.darkMode;
-  document.body.dataset.theme = state.darkMode ? 'dark' : 'light';
-  document.getElementById('dark-mode-btn').textContent = state.darkMode ? '☀' : '🌙';
+// ── Zoom buttons ──
+document.getElementById('zoom-out-btn').addEventListener('click',()=>setZoom(S.zoom/1.25));
+document.getElementById('zoom-in-btn').addEventListener('click',()=>setZoom(S.zoom*1.25));
+document.getElementById('zoom-fit-btn').addEventListener('click',()=>setZoom(1));
+document.getElementById('canvas-area').addEventListener('wheel',e=>{
+  if(e.ctrlKey||e.metaKey){ e.preventDefault(); setZoom(S.zoom*(1-e.deltaY*0.002)); }
+},{passive:false});
+
+// ── Sidebar toggle ──
+document.getElementById('sidebar-toggle').addEventListener('click',()=>{
+  const sb=document.getElementById('sidebar');
+  sb.classList.toggle('hidden');
+});
+document.getElementById('new-page-btn').addEventListener('click',()=>createPage('Untitled Page'));
+document.getElementById('search-input').addEventListener('input',renderSidebar);
+
+// ── Page title ──
+document.getElementById('pg-title').addEventListener('input',e=>{
+  const pg=S.pages.find(p=>p.id===S.activePage);
+  if(pg){ pg.title=e.target.value||'Untitled Page'; renderSidebar(); scheduleSave(); }
+});
+
+// ── Dark mode ──
+document.getElementById('dark-mode-btn').addEventListener('click',()=>{
+  S.darkMode=!S.darkMode;
+  document.body.dataset.theme=S.darkMode?'dark':'light';
+  document.getElementById('dark-mode-btn').textContent=S.darkMode?'☀':'🌙';
   renderBg(); redrawStrokes(); scheduleSave();
 });
 
-// ---- Context Menu ----
-function showContextMenu(e, pageId) {
-  const cm = document.getElementById('context-menu');
-  cm.style.display = 'block';
-  cm.style.left = e.clientX + 'px';
-  cm.style.top = e.clientY + 'px';
-  cm.dataset.pageId = pageId;
-}
-document.addEventListener('click', () => document.getElementById('context-menu').style.display = 'none');
-document.getElementById('draw-canvas').addEventListener('contextmenu', e => {
-  e.preventDefault();
-  const cm = document.getElementById('context-menu');
-  cm.style.display = 'block';
-  cm.style.left = e.clientX + 'px';
-  cm.style.top = e.clientY + 'px';
-});
-document.getElementById('ctx-undo').addEventListener('click', undo);
-document.getElementById('ctx-redo').addEventListener('click', redo);
-document.getElementById('ctx-clear-page').addEventListener('click', () => {
-  if (confirm('Clear all strokes on this page?')) {
-    state.strokes[state.activePage] = [];
-    state.redoStack[state.activePage] = [];
-    redrawStrokes(); scheduleSave();
-  }
-});
-document.getElementById('ctx-delete-page').addEventListener('click', () => {
-  const id = document.getElementById('context-menu').dataset.pageId || state.activePage;
-  if (confirm('Delete this page?')) deletePage(id);
-});
+// ── Export ──
+document.getElementById('export-btn').addEventListener('click',()=>document.getElementById('export-modal').classList.add('open'));
+document.getElementById('exp-cancel').addEventListener('click',()=>document.getElementById('export-modal').classList.remove('open'));
+document.getElementById('export-modal').addEventListener('click',e=>{ if(e.target===document.getElementById('export-modal')) document.getElementById('export-modal').classList.remove('open'); });
 
-// ---- Export ----
-document.getElementById('export-btn').addEventListener('click', () => {
-  document.getElementById('export-modal').classList.add('open');
+document.getElementById('exp-png').addEventListener('click',()=>{
+  document.getElementById('export-modal').classList.remove('open');
+  const off=document.createElement('canvas');
+  const dpr=2; off.width=PAGE_W*dpr; off.height=PAGE_H*dpr;
+  const ctx=off.getContext('2d'); ctx.scale(dpr,dpr);
+  ctx.drawImage(bgC,0,0,PAGE_W,PAGE_H); ctx.drawImage(drC,0,0,PAGE_W,PAGE_H);
+  const pg=S.pages.find(p=>p.id===S.activePage);
+  const a=document.createElement('a'); a.download=(pg?.title||'inkpad')+'.png'; a.href=off.toDataURL(); a.click();
+  showToast('Exported as PNG');
 });
-document.getElementById('export-cancel').addEventListener('click', () => document.getElementById('export-modal').classList.remove('open'));
-document.getElementById('export-modal').addEventListener('click', e => { if (e.target === document.getElementById('export-modal')) document.getElementById('export-modal').classList.remove('open'); });
-
-document.getElementById('export-png-card').addEventListener('click', () => {
-  exportPNG(); document.getElementById('export-modal').classList.remove('open');
-});
-document.getElementById('export-pdf-card').addEventListener('click', () => {
-  exportPDF(); document.getElementById('export-modal').classList.remove('open');
-});
-
-function exportPNG() {
-  const dpr = 2;
-  const offscreen = document.createElement('canvas');
-  offscreen.width = PAGE_W * dpr; offscreen.height = PAGE_H * dpr;
-  const ctx = offscreen.getContext('2d');
-  ctx.scale(dpr, dpr);
-
-  // Draw bg
-  ctx.drawImage(bgCanvas, 0, 0, PAGE_W, PAGE_H);
-  ctx.drawImage(drawCanvas, 0, 0, PAGE_W, PAGE_H);
-
-  const link = document.createElement('a');
-  const page = state.pages.find(p => p.id === state.activePage);
-  link.download = (page?.title || 'inkpad') + '.png';
-  link.href = offscreen.toDataURL('image/png');
-  link.click();
-  showToast('Page exported as PNG');
-}
-
-function exportPDF() {
-  // Load jsPDF from CDN
+document.getElementById('exp-pdf').addEventListener('click',()=>{
+  document.getElementById('export-modal').classList.remove('open');
   showToast('Preparing PDF…');
-  const script = document.createElement('script');
-  script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-  script.onload = () => {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF({ orientation: 'portrait', unit: 'pt', format: [PAGE_W * 0.75, PAGE_H * 0.75] });
-
-    // Merge bg and draw canvas
-    const off = document.createElement('canvas');
-    off.width = PAGE_W; off.height = PAGE_H;
-    const ctx = off.getContext('2d');
-    ctx.drawImage(bgCanvas, 0, 0, PAGE_W, PAGE_H);
-    ctx.drawImage(drawCanvas, 0, 0, PAGE_W, PAGE_H);
-    const imgData = off.toDataURL('image/png');
-    doc.addImage(imgData, 'PNG', 0, 0, PAGE_W * 0.75, PAGE_H * 0.75);
-
-    const page = state.pages.find(p => p.id === state.activePage);
-    doc.save((page?.title || 'inkpad') + '.pdf');
-    showToast('Page exported as PDF');
+  const s=document.createElement('script');
+  s.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+  s.onload=()=>{
+    const {jsPDF}=window.jspdf;
+    const doc=new jsPDF({orientation:'portrait',unit:'pt',format:[PAGE_W*0.75,PAGE_H*0.75]});
+    const off=document.createElement('canvas'); off.width=PAGE_W; off.height=PAGE_H;
+    const ctx=off.getContext('2d');
+    ctx.drawImage(bgC,0,0,PAGE_W,PAGE_H); ctx.drawImage(drC,0,0,PAGE_W,PAGE_H);
+    doc.addImage(off.toDataURL('image/png'),'PNG',0,0,PAGE_W*0.75,PAGE_H*0.75);
+    const pg=S.pages.find(p=>p.id===S.activePage);
+    doc.save((pg?.title||'inkpad')+'.pdf');
+    showToast('Exported as PDF');
   };
-  document.head.appendChild(script);
+  document.head.appendChild(s);
+});
+
+// ── Settings ──
+document.getElementById('settings-btn').addEventListener('click',()=>document.getElementById('settings-modal').classList.add('open'));
+document.getElementById('s-close').addEventListener('click',()=>document.getElementById('settings-modal').classList.remove('open'));
+document.getElementById('settings-modal').addEventListener('click',e=>{ if(e.target===document.getElementById('settings-modal')) document.getElementById('settings-modal').classList.remove('open'); });
+function syncSettingsUI(){
+  document.getElementById('s-palm').checked=S.settings.palmReject;
+  document.getElementById('s-stylus-only').checked=S.settings.stylusOnly;
+  document.getElementById('s-pressure').checked=S.settings.pressure;
+  document.getElementById('s-smooth').checked=S.settings.smooth;
+  document.getElementById('s-touch-erase').checked=S.settings.touchErase;
 }
-
-// ---- Settings ----
-document.getElementById('settings-btn').addEventListener('click', () => document.getElementById('settings-modal').classList.add('open'));
-document.getElementById('settings-close').addEventListener('click', () => document.getElementById('settings-modal').classList.remove('open'));
-document.getElementById('settings-modal').addEventListener('click', e => { if (e.target === document.getElementById('settings-modal')) document.getElementById('settings-modal').classList.remove('open'); });
-
-function syncSettingsUI() {
-  document.getElementById('setting-palm').checked = state.settings.palmReject;
-  document.getElementById('setting-stylus-only').checked = state.settings.stylusOnly;
-  document.getElementById('setting-pressure').checked = state.settings.pressure;
-  document.getElementById('setting-smooth').checked = state.settings.smooth;
-  document.getElementById('setting-touch-erase').checked = state.settings.touchErase;
-  document.getElementById('palm-reject-badge').classList.toggle('active', state.settings.palmReject);
-}
-
-['palm','stylus-only','pressure','smooth','touch-erase'].forEach(key => {
-  const el = document.getElementById('setting-' + key);
-  if (!el) return;
-  el.addEventListener('change', () => {
-    const k = key.replace(/-([a-z])/g, (_, l) => l.toUpperCase());
-    const map = { palm: 'palmReject', stylusOnly: 'stylusOnly', pressure: 'pressure', smooth: 'smooth', touchErase: 'touchErase' };
-    const sk = map[k] || k;
-    state.settings[sk] = el.checked;
-    syncSettingsUI();
-    scheduleSave();
+[['s-palm','palmReject'],['s-stylus-only','stylusOnly'],['s-pressure','pressure'],['s-smooth','smooth'],['s-touch-erase','touchErase']].forEach(([id,key])=>{
+  document.getElementById(id).addEventListener('change',e=>{
+    S.settings[key]=e.target.checked; updateStatus(); scheduleSave();
   });
 });
 
-// ---- Toast ----
-let toastTimer;
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
-}
-
-// ---- Wheel zoom (trackpad) ----
-document.getElementById('canvas-area').addEventListener('wheel', e => {
-  if (e.ctrlKey || e.metaKey) {
-    e.preventDefault();
-    setZoom(state.zoom * (1 - e.deltaY * 0.002));
-  }
-}, { passive: false });
-
-// ---- Boot ----
-(async () => {
+// ── Boot ──
+(async()=>{
   setupCanvases();
   await loadAll();
-  syncSettingsUI();
-  updateStatusBar();
-  showToast('InkPad ready — use a stylus for best results');
+  syncSettingsUI(); updateStatus();
+  showToast('InkPad ready ✒ Use stylus for best results');
 })();
 </script>
 </body>
