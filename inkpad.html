@@ -77,72 +77,111 @@ html,body{width:100%;height:100%;overflow:hidden;
 .sb-ft-btn:hover{background:var(--bg);color:var(--tx);border-color:var(--bd2);}
 .sb-ft-btn .icon{font-size:15px;}
 
-/* ══ TOOLBAR — 2 rows, always fits ══ */
+/* ══ TOOLBAR — 2 scrollable rows, nothing ever clips ══ */
 #toolbar{background:var(--bgt);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
   border-bottom:1px solid var(--bd);display:flex;flex-direction:column;flex-shrink:0;z-index:10;user-select:none;}
-#tb1{height:var(--r1h);display:flex;align-items:center;padding:0 6px;gap:3px;
-  border-bottom:1px solid var(--bd);min-width:0;}
-#tb2{height:var(--r2h);display:flex;align-items:center;padding:0 6px;gap:5px;min-width:0;}
 
-/* generic toolbar button */
-.tb{background:none;border:none;color:var(--tx2);cursor:pointer;padding:5px 6px;
-  border-radius:var(--r1);font-size:16px;display:flex;align-items:center;justify-content:center;
-  transition:background var(--tr),color var(--tr);position:relative;flex-shrink:0;white-space:nowrap;}
+/* Both rows scroll horizontally — thin invisible scrollbar */
+#tb1,#tb2{display:flex;align-items:center;padding:0 6px;gap:3px;
+  overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;}
+#tb1{height:var(--r1h);border-bottom:1px solid var(--bd);}
+#tb2{height:var(--r2h);}
+#tb1::-webkit-scrollbar,#tb2::-webkit-scrollbar{height:0;display:none;}
+
+/* generic icon-only toolbar button with rich tooltip */
+.tb{background:none;border:none;color:var(--tx2);cursor:pointer;
+  padding:6px 7px;border-radius:var(--r1);font-size:17px;
+  display:flex;align-items:center;justify-content:center;
+  transition:background var(--tr),color var(--tr);
+  position:relative;flex-shrink:0;white-space:nowrap;min-width:32px;}
 .tb:hover{background:var(--bg2);color:var(--tx);}
 .tb.on{background:var(--acl);color:var(--ac);}
-.tb .tip{position:absolute;bottom:-26px;left:50%;transform:translateX(-50%);
-  background:var(--tx);color:var(--bg);font-size:10px;padding:3px 6px;border-radius:4px;
-  white-space:nowrap;pointer-events:none;opacity:0;transition:opacity 0.1s;z-index:300;}
+
+/* Tooltip — appears below, with label */
+.tb .tip{
+  position:absolute;top:calc(100% + 7px);left:50%;transform:translateX(-50%);
+  background:var(--tx);color:var(--bg);
+  font-size:11px;font-weight:500;padding:5px 9px;border-radius:6px;
+  white-space:nowrap;pointer-events:none;
+  opacity:0;transition:opacity 0.12s;z-index:400;
+  box-shadow:0 2px 8px rgba(0,0,0,0.18);}
+.tb .tip::before{content:'';position:absolute;bottom:100%;left:50%;transform:translateX(-50%);
+  border:4px solid transparent;border-bottom-color:var(--tx);}
 .tb:hover .tip{opacity:1;}
 
 /* tool group pill */
-.tg{display:flex;align-items:center;background:var(--bg2);border-radius:var(--r2);padding:2px;gap:1px;flex-shrink:0;}
+.tg{display:flex;align-items:center;background:var(--bg2);border-radius:var(--r2);
+  padding:2px;gap:1px;flex-shrink:0;}
 
-/* labelled action buttons — undo redo clear */
-.ab{display:flex;align-items:center;gap:3px;padding:4px 8px;border-radius:var(--r1);
-  border:1px solid var(--bd);background:var(--bg2);font-size:11.5px;font-weight:500;
-  color:var(--tx2);cursor:pointer;transition:all var(--tr);white-space:nowrap;flex-shrink:0;}
+/* action buttons — icon + short label, compact */
+.ab{display:flex;align-items:center;gap:4px;padding:5px 9px;border-radius:var(--r1);
+  border:1px solid var(--bd);background:var(--bg2);
+  font-size:12px;font-weight:500;color:var(--tx2);
+  cursor:pointer;transition:all var(--tr);white-space:nowrap;flex-shrink:0;
+  position:relative;}
 .ab:hover{background:var(--bg);color:var(--tx);border-color:var(--bd2);}
 .ab:active{transform:scale(0.96);}
 .ab.clr:hover{background:#FEE2E2;color:#DC2626;border-color:#FCA5A5;}
 [data-theme=dark] .ab.clr:hover{background:#3B1616;color:#F87171;border-color:#7F1D1D;}
 
-/* global action buttons row1 right — dark/export/settings always visible */
-.ga{display:flex;align-items:center;gap:3px;padding:5px 7px;border-radius:var(--r1);
-  border:1px solid var(--bd);background:var(--bg2);font-size:11px;font-weight:500;
-  color:var(--tx2);cursor:pointer;transition:all var(--tr);white-space:nowrap;flex-shrink:0;gap:4px;}
+/* global icon buttons — dark / export / settings */
+.ga{display:flex;align-items:center;justify-content:center;
+  padding:6px 7px;border-radius:var(--r1);
+  border:1px solid var(--bd);background:var(--bg2);
+  font-size:16px;color:var(--tx2);cursor:pointer;
+  transition:all var(--tr);flex-shrink:0;position:relative;min-width:32px;}
 .ga:hover{background:var(--bg);color:var(--tx);border-color:var(--bd2);}
-.ga .gi{font-size:14px;}
+.ga .tip{
+  position:absolute;top:calc(100% + 7px);left:50%;transform:translateX(-50%);
+  background:var(--tx);color:var(--bg);
+  font-size:11px;font-weight:500;padding:5px 9px;border-radius:6px;
+  white-space:nowrap;pointer-events:none;
+  opacity:0;transition:opacity 0.12s;z-index:400;
+  box-shadow:0 2px 8px rgba(0,0,0,0.18);}
+.ga .tip::before{content:'';position:absolute;bottom:100%;left:50%;transform:translateX(-50%);
+  border:4px solid transparent;border-bottom-color:var(--tx);}
+.ga:hover .tip{opacity:1;}
 
-.tdiv{width:1px;height:20px;background:var(--bd2);margin:0 2px;flex-shrink:0;}
+.tdiv{width:1px;height:20px;background:var(--bd2);margin:0 3px;flex-shrink:0;}
 
-/* page title */
+/* page title — centered, grows but doesn't push zoom off */
 #pg-ttl{background:none;border:none;outline:none;font-size:13px;font-weight:600;
-  color:var(--tx);text-align:center;flex:1;min-width:40px;max-width:160px;padding:0 4px;}
+  color:var(--tx);text-align:center;width:130px;flex-shrink:0;padding:0 4px;}
 #pg-ttl::placeholder{color:var(--tx3);font-weight:400;}
 
 /* color swatches */
-.csw{width:18px;height:18px;border-radius:50%;cursor:pointer;border:2.5px solid transparent;
-  transition:border-color var(--tr),transform var(--tr);flex-shrink:0;}
-.csw:hover{transform:scale(1.2);}
+.csw{width:19px;height:19px;border-radius:50%;cursor:pointer;border:2.5px solid transparent;
+  transition:border-color var(--tr),transform var(--tr);flex-shrink:0;position:relative;}
+.csw:hover{transform:scale(1.22);}
 .csw.on{border-color:var(--ac);}
 
 /* size */
-.szw{display:flex;align-items:center;gap:4px;flex-shrink:0;}
-.szw label{font-size:11px;color:var(--tx2);}
-#stroke-size{width:56px;accent-color:var(--ac);}
-#sz-val{font-size:11px;color:var(--tx2);min-width:16px;text-align:right;}
+.szw{display:flex;align-items:center;gap:5px;flex-shrink:0;}
+.szw label{font-size:11px;color:var(--tx2);white-space:nowrap;}
+#stroke-size{width:70px;accent-color:var(--ac);}
+#sz-val{font-size:11px;color:var(--tx2);min-width:18px;text-align:right;}
 
 /* paper buttons */
-.pp{padding:3px 7px;border-radius:var(--r1);border:1px solid var(--bd);background:var(--bg2);
+.pp{padding:4px 8px;border-radius:var(--r1);border:1px solid var(--bd);background:var(--bg2);
   font-size:11px;color:var(--tx2);cursor:pointer;transition:all var(--tr);flex-shrink:0;}
 .pp:hover,.pp.on{background:var(--acl);color:var(--ac);border-color:var(--ac);}
 
-/* zoom */
-.zb{padding:4px 6px;border-radius:var(--r1);border:1px solid var(--bd);background:var(--bg2);
-  font-size:12px;color:var(--tx2);cursor:pointer;transition:all var(--tr);flex-shrink:0;}
+/* zoom group — always visible, lives at end of row2 */
+.zg{display:flex;align-items:center;gap:2px;flex-shrink:0;margin-left:auto;}
+.zb{display:flex;align-items:center;justify-content:center;
+  width:28px;height:26px;border-radius:var(--r1);border:1px solid var(--bd);
+  background:var(--bg2);font-size:14px;font-weight:600;color:var(--tx2);
+  cursor:pointer;transition:all var(--tr);flex-shrink:0;position:relative;}
 .zb:hover{background:var(--bg);color:var(--tx);}
-#zoom-pct{font-size:11px;color:var(--tx2);min-width:32px;text-align:center;flex-shrink:0;}
+.zb .tip{position:absolute;top:calc(100% + 7px);left:50%;transform:translateX(-50%);
+  background:var(--tx);color:var(--bg);font-size:11px;font-weight:500;
+  padding:5px 9px;border-radius:6px;white-space:nowrap;pointer-events:none;
+  opacity:0;transition:opacity 0.12s;z-index:400;box-shadow:0 2px 8px rgba(0,0,0,0.18);}
+.zb .tip::before{content:'';position:absolute;bottom:100%;left:50%;transform:translateX(-50%);
+  border:4px solid transparent;border-bottom-color:var(--tx);}
+.zb:hover .tip{opacity:1;}
+#zoom-pct{font-size:11px;color:var(--tx2);min-width:36px;text-align:center;
+  flex-shrink:0;font-weight:500;}
 
 /* ══ CANVAS ══ */
 #canvas-area{flex:1;overflow:hidden;position:relative;background:var(--bg);touch-action:none;}
@@ -225,32 +264,10 @@ html,body{width:100%;height:100%;overflow:hidden;
 #toast.on{opacity:1;transform:translateX(-50%) translateY(0);}
 
 /* ══ RESPONSIVE ══ */
-/* Tablet (≤900px) — sidebar auto-hidden, global btns always in toolbar */
 @media(max-width:900px){
   #sidebar{position:absolute;height:100%;box-shadow:var(--shl);}
-  #sidebar:not(.hidden)~#main{margin-left:0;}
-  /* hide sidebar footer since controls are in toolbar */
   #sb-ft{display:none;}
-  /* show inline global bar in toolbar */
   #tb-globals{display:flex !important;}
-}
-/* Small tablet / large phone */
-@media(max-width:680px){
-  :root{--r1h:44px;--r2h:38px;}
-  #pg-ttl{max-width:100px;}
-  .ab span{display:none;} /* icon only for undo/redo/clear */
-  .ab{padding:4px 6px;}
-  #zoom-pct{display:none;}
-}
-/* Phone */
-@media(max-width:480px){
-  :root{--r1h:42px;--r2h:36px;}
-  #pg-ttl{display:none;}
-  .ga span{display:none;}
-  .ga{padding:5px 6px;}
-  .pp{padding:3px 5px;font-size:10px;}
-  #sz-val{display:none;}
-  #stroke-size{width:46px;}
 }
 </style>
 </head>
@@ -268,7 +285,7 @@ html,body{width:100%;height:100%;overflow:hidden;
   <div id="notebooks-list"></div>
   <div class="sb-sec" style="margin-top:6px;">Pages</div>
   <div id="pages-list"></div>
-  <!-- Footer only shown on desktop (hidden on tablet via CSS) -->
+  <!-- Footer only shown on wider screens where sidebar is docked -->
   <div id="sb-ft">
     <button class="sb-ft-btn" id="dm-btn-sb"><span class="icon">🌙</span>Dark</button>
     <button class="sb-ft-btn" id="exp-btn-sb"><span class="icon">📤</span>Export</button>
@@ -279,21 +296,23 @@ html,body{width:100%;height:100%;overflow:hidden;
 <!-- ══ MAIN ══ -->
 <div id="main">
 
-  <!-- TOOLBAR ROW 1: sidebar | tools | eraser | undo/redo/clear | title | [global] | zoom -->
+  <!-- TOOLBAR -->
   <div id="toolbar">
+
+    <!-- ROW 1: sidebar | tools | erasers | divider | undo redo clear | divider | title | divider | dark export settings -->
     <div id="tb1">
-      <button class="tb" id="sb-toggle" title="Toggle sidebar">☰<span class="tip">Sidebar</span></button>
+      <button class="tb" id="sb-toggle">☰<span class="tip">Toggle sidebar</span></button>
       <div class="tdiv"></div>
 
       <!-- Drawing tools -->
       <div class="tg">
         <button class="tb on" data-tool="fountain">🖊<span class="tip">Fountain Pen</span></button>
-        <button class="tb" data-tool="ballpoint">🖋<span class="tip">Ballpoint</span></button>
+        <button class="tb" data-tool="ballpoint">🖋<span class="tip">Ballpoint Pen</span></button>
         <button class="tb" data-tool="highlighter">✏️<span class="tip">Highlighter</span></button>
         <button class="tb" data-tool="pencil">✎<span class="tip">Pencil</span></button>
       </div>
       <!-- Eraser + Lasso -->
-      <div class="tg" style="margin-left:2px;">
+      <div class="tg" style="margin-left:3px;">
         <button class="tb" data-tool="eraser-pixel">◻<span class="tip">Pixel Eraser</span></button>
         <button class="tb" data-tool="eraser-stroke">⌫<span class="tip">Stroke Eraser</span></button>
         <button class="tb" data-tool="lasso">⌾<span class="tip">Lasso Select</span></button>
@@ -301,48 +320,43 @@ html,body{width:100%;height:100%;overflow:hidden;
 
       <div class="tdiv"></div>
 
-      <!-- Undo / Redo / Clear — always labelled -->
-      <button class="ab" id="undo-btn">↩ <span>Undo</span></button>
-      <button class="ab" id="redo-btn">↪ <span>Redo</span></button>
-      <button class="ab clr" id="clear-btn">🗑 <span>Clear</span></button>
+      <!-- Undo / Redo / Clear with labels -->
+      <button class="ab" id="undo-btn">↩ Undo</button>
+      <button class="ab" id="redo-btn">↪ Redo</button>
+      <button class="ab clr" id="clear-btn">🗑 Clear</button>
 
       <div class="tdiv"></div>
+
+      <!-- Page title -->
       <input type="text" id="pg-ttl" placeholder="Untitled Page" maxlength="60">
 
-      <!-- Global controls — ALWAYS visible on tablet/phone (hidden on desktop where sidebar has them) -->
-      <div id="tb-globals" style="display:none;align-items:center;gap:3px;margin-left:4px;">
-        <div class="tdiv"></div>
-        <button class="ga" id="dm-btn-tb"><span class="gi">🌙</span><span>Dark</span></button>
-        <button class="ga" id="exp-btn-tb"><span class="gi">📤</span><span>Export</span></button>
-        <button class="ga" id="set-btn-tb"><span class="gi">🛡</span><span>Settings</span></button>
-      </div>
+      <div class="tdiv"></div>
 
-      <!-- Zoom — pushed right -->
-      <div style="margin-left:auto;display:flex;align-items:center;gap:2px;flex-shrink:0;">
-        <button class="zb" id="zm-out">−</button>
-        <span id="zoom-pct">100%</span>
-        <button class="zb" id="zm-in">+</button>
-        <button class="zb" id="zm-fit" title="Fit page">⊞</button>
+      <!-- Dark / Export / Settings — icon only, tooltip on hover, ALWAYS in toolbar -->
+      <div id="tb-globals" style="display:flex;align-items:center;gap:3px;">
+        <button class="ga" id="dm-btn-tb">🌙<span class="tip">Toggle dark mode</span></button>
+        <button class="ga" id="exp-btn-tb">📤<span class="tip">Export page</span></button>
+        <button class="ga" id="set-btn-tb">🛡<span class="tip">Stylus settings</span></button>
       </div>
     </div>
 
-    <!-- TOOLBAR ROW 2: colors | size | paper -->
+    <!-- ROW 2: colors | divider | size | divider | paper | divider | zoom (always at end, never clips) -->
     <div id="tb2">
       <!-- Color swatches -->
-      <div class="csw on"  style="background:#1A1A18;" data-color="#1A1A18"></div>
-      <div class="csw"     style="background:#1D4ED8;" data-color="#1D4ED8"></div>
-      <div class="csw"     style="background:#DC2626;" data-color="#DC2626"></div>
-      <div class="csw"     style="background:#16A34A;" data-color="#16A34A"></div>
-      <div class="csw"     style="background:#9333EA;" data-color="#9333EA"></div>
-      <div class="csw"     style="background:#EA580C;" data-color="#EA580C"></div>
-      <div class="csw"     style="background:#0891B2;" data-color="#0891B2"></div>
+      <div class="csw on"  style="background:#1A1A18;" data-color="#1A1A18" title="Black"></div>
+      <div class="csw"     style="background:#1D4ED8;" data-color="#1D4ED8" title="Blue"></div>
+      <div class="csw"     style="background:#DC2626;" data-color="#DC2626" title="Red"></div>
+      <div class="csw"     style="background:#16A34A;" data-color="#16A34A" title="Green"></div>
+      <div class="csw"     style="background:#9333EA;" data-color="#9333EA" title="Purple"></div>
+      <div class="csw"     style="background:#EA580C;" data-color="#EA580C" title="Orange"></div>
+      <div class="csw"     style="background:#0891B2;" data-color="#0891B2" title="Cyan"></div>
       <div class="csw" id="cpick-btn"
            style="background:conic-gradient(red,yellow,lime,cyan,blue,magenta,red);border-color:transparent;"
            title="Custom color"></div>
 
       <div class="tdiv"></div>
 
-      <!-- Size -->
+      <!-- Stroke size -->
       <div class="szw">
         <label>Size</label>
         <input type="range" id="stroke-size" min="0.5" max="20" step="0.5" value="2">
@@ -356,7 +370,16 @@ html,body{width:100%;height:100%;overflow:hidden;
       <button class="pp" data-paper="ruled">Ruled</button>
       <button class="pp" data-paper="grid">Grid</button>
       <button class="pp" data-paper="dot">Dot</button>
+
+      <!-- Zoom — margin-left:auto pushes it to the far right, always visible -->
+      <div class="zg">
+        <button class="zb" id="zm-out">−<span class="tip">Zoom out</span></button>
+        <span id="zoom-pct">100%</span>
+        <button class="zb" id="zm-in">+<span class="tip">Zoom in</span></button>
+        <button class="zb" id="zm-fit">⊞<span class="tip">Fit to screen</span></button>
+      </div>
     </div>
+
   </div>
 
   <!-- CANVAS AREA -->
@@ -636,7 +659,7 @@ document.getElementById('search-input').addEventListener('input',renderSB);
 document.getElementById('pg-ttl').addEventListener('input',e=>{const pg=S.pages.find(p=>p.id===S.activePage);if(pg){pg.title=e.target.value||'Untitled Page';renderSB();sched();}});
 
 // ── Dark mode (works from both sidebar footer and toolbar) ──
-function toggleDark(){S.darkMode=!S.darkMode;document.body.dataset.theme=S.darkMode?'dark':'light';const ico=S.darkMode?'☀':'🌙';document.getElementById('dm-btn-sb').innerHTML=`<span class="icon">${ico}</span>${S.darkMode?'Light':'Dark'}`;document.querySelectorAll('#dm-btn-tb').forEach(b=>{b.querySelector('.gi').textContent=ico;b.querySelector('span:last-child').textContent=S.darkMode?'Light':'Dark';});drawBg();redraw();sched();}
+function toggleDark(){S.darkMode=!S.darkMode;document.body.dataset.theme=S.darkMode?'dark':'light';const ico=S.darkMode?'☀':'🌙';const tip=S.darkMode?'Switch to light mode':'Toggle dark mode';document.getElementById('dm-btn-sb').innerHTML=`<span class="icon">${ico}</span>${S.darkMode?'Light':'Dark'}`;const tb=document.getElementById('dm-btn-tb');if(tb){tb.childNodes[0].textContent=ico;const t=tb.querySelector('.tip');if(t)t.textContent=tip;}drawBg();redraw();sched();}
 document.getElementById('dm-btn-sb').addEventListener('click',toggleDark);
 document.getElementById('dm-btn-tb').addEventListener('click',toggleDark);
 
